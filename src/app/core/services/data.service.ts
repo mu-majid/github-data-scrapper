@@ -85,23 +85,6 @@ export class DataService {
     return this.http.get<FieldsResponse>(`${this.baseUrl}/data/collection/${collectionName}/fields`);
   }
 
-  exportCollectionData(collectionName: string, format: 'json' | 'csv' = 'json'): Observable<any> {
-    let httpParams = new HttpParams().set('format', format);
-    
-    if (format === 'csv') {
-      return this.http.get(`${this.baseUrl}/data/collection/${collectionName}/export`, {
-        params: httpParams,
-        responseType: 'blob'
-      });
-    } 
-    else {
-      return this.http.get(`${this.baseUrl}/data/collection/${collectionName}/export`, {
-        params: httpParams,
-        responseType: 'json'
-      });
-    }
-  }
-
   getCollectionStats(collectionName: string): Observable<any> {
     return this.http.get(`${this.baseUrl}/data/collection/${collectionName}/stats`);
   }
