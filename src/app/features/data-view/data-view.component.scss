@@ -1,0 +1,423 @@
+@import 'ag-grid-community/styles/ag-grid.css';
+@import 'ag-grid-community/styles/ag-theme-alpine.css';
+.container {
+  padding: 20px;
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+.header-controls {
+  margin-bottom: 20px;
+  
+  .demo-info {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 15px;
+    
+    .demo-badge {
+      background: #2196f3;
+      color: white;
+      padding: 4px 12px;
+      border-radius: 16px;
+      font-size: 12px;
+      font-weight: 500;
+    }
+    
+    .demo-date {
+      color: #666;
+      font-size: 14px;
+    }
+    
+    .user-info {
+      color: #666;
+      font-size: 14px;
+      margin-left: auto;
+    }
+  }
+  
+  .controls-row {
+    display: flex;
+    gap: 10px;
+  }
+}
+
+.filter-controls {
+  display: flex;
+  gap: 15px;
+  align-items: flex-end;
+  margin-bottom: 25px;
+  flex-wrap: wrap;
+  
+  .select-field {
+    min-width: 180px;
+  }
+  
+  .search-field {
+    min-width: 250px;
+    flex: 1;
+  }
+}
+
+.grid-container {
+  height: 70vh;
+  min-height: 500px;
+  width: 100%;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e0e0e0;
+}
+
+// AG Grid Theme Customizations
+:host ::ng-deep {
+  .ag-theme-alpine {
+    height: 100%;
+    width: 100%;
+    
+    // Header styling
+    .ag-header {
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      border-bottom: 2px solid #2196f3;
+      
+      .ag-header-cell {
+        border-right: 1px solid #e0e0e0;
+        
+        .ag-header-cell-text {
+          font-weight: 600;
+          color: #333;
+          font-size: 13px;
+        }
+        
+        &:hover {
+          background-color: rgba(33, 150, 243, 0.1);
+        }
+      }
+    }
+    
+    // Row styling
+    .ag-row {
+      border-bottom: 1px solid #f0f0f0;
+      
+      &.ag-row-even {
+        background-color: #fafafa;
+      }
+      
+      &.ag-row-odd {
+        background-color: #ffffff;
+      }
+      
+      &:hover {
+        background-color: rgba(33, 150, 243, 0.05) !important;
+      }
+      
+      &.ag-row-selected {
+        background-color: rgba(33, 150, 243, 0.1) !important;
+      }
+    }
+    
+    // Cell styling
+    .ag-cell {
+      display: flex;
+      align-items: center;
+      padding: 8px 12px;
+      border-right: 1px solid #f0f0f0;
+      font-size: 13px;
+      
+      // Truncate long text
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      
+      &:focus {
+        outline: 2px solid #2196f3;
+        outline-offset: -2px;
+      }
+    }
+    
+    // Selection checkbox styling
+    .ag-selection-checkbox {
+      .ag-input-wrapper {
+        .ag-checkbox-input {
+          accent-color: #2196f3;
+        }
+      }
+    }
+    
+    // Filter styling
+    .ag-filter-toolpanel-search {
+      margin-bottom: 10px;
+    }
+    
+    // Pagination styling
+    .ag-paging-panel {
+      background: #f8f9fa;
+      border-top: 1px solid #e0e0e0;
+      padding: 12px 16px;
+      
+      .ag-paging-button {
+        &:not(.ag-disabled) {
+          color: #2196f3;
+          
+          &:hover {
+            background-color: rgba(33, 150, 243, 0.1);
+          }
+        }
+      }
+      
+      .ag-paging-row-summary-panel,
+      .ag-paging-page-summary-panel {
+        font-size: 13px;
+        color: #666;
+      }
+    }
+    
+    // Scrollbar styling
+    .ag-body-horizontal-scroll,
+    .ag-body-vertical-scroll {
+      &::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+      }
+      
+      &::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 4px;
+      }
+      
+      &::-webkit-scrollbar-thumb {
+        background: #c1c1c1;
+        border-radius: 4px;
+        
+        &:hover {
+          background: #a1a1a1;
+        }
+      }
+    }
+    
+    // Specific column styling for different data types
+    .ag-cell {
+      // URL columns
+      &[col-id*="url"] {
+        color: #2196f3;
+        cursor: pointer;
+        
+        &:hover {
+          text-decoration: underline;
+        }
+      }
+      
+      // Email columns
+      &[col-id="email"] {
+        color: #2196f3;
+        cursor: pointer;
+        
+        &:hover {
+          text-decoration: underline;
+        }
+      }
+      
+      // Number columns
+      &[col-id="id"],
+      &[col-id="followers"],
+      &[col-id="following"],
+      &[col-id="public_repos"],
+      &[col-id="public_gists"] {
+        text-align: right;
+        font-family: 'Courier New', monospace;
+        font-weight: 500;
+      }
+      
+      // Boolean columns (checkmarks)
+      &[col-id*="has_"],
+      &[col-id*="is_"] {
+        text-align: center;
+        font-size: 16px;
+      }
+      
+      // Date columns
+      &[col-id*="created"],
+      &[col-id*="updated"] {
+        font-family: 'Courier New', monospace;
+        font-size: 12px;
+        color: #666;
+      }
+    }
+  }
+}
+
+.loading-overlay {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(255, 255, 255, 0.9);
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+}
+
+// Responsive design
+@media (max-width: 768px) {
+  .filter-controls {
+    flex-direction: column;
+    align-items: stretch;
+    
+    .select-field,
+    .search-field {
+      min-width: unset;
+      width: 100%;
+    }
+  }
+  
+  .grid-container {
+    height: 60vh;
+    min-height: 400px;
+  }
+  
+  :host ::ng-deep .ag-theme-alpine {
+    .ag-cell {
+      padding: 6px 8px;
+      font-size: 12px;
+    }
+    
+    .ag-header-cell .ag-header-cell-text {
+      font-size: 12px;
+    }
+  }
+}
+
+// Dark mode support (optional)
+@media (prefers-color-scheme: dark) {
+  :host ::ng-deep .ag-theme-alpine {
+    .ag-header {
+      background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+      color: #ecf0f1;
+      
+      .ag-header-cell-text {
+        color: #ecf0f1;
+      }
+    }
+    
+    .ag-row {
+      &.ag-row-even {
+        background-color: #2c3e50;
+      }
+      
+      &.ag-row-odd {
+        background-color: #34495e;
+      }
+      
+      &:hover {
+        background-color: rgba(52, 152, 219, 0.2) !important;
+      }
+    }
+    
+    .ag-cell {
+      color: #ecf0f1;
+      border-right-color: #4a5f7a;
+    }
+  }
+}
+
+.grid-container {
+  height: 600px; // ← THIS IS ESSENTIAL! Without height, grid won't show
+  width: 100%;
+  margin-top: 20px;
+}
+
+.grid-container {
+  height: 600px;
+  width: 100%;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e0e0e0;
+}
+
+ag-grid-angular {
+  height: 100%;
+  width: 100%;
+}
+
+:host ::ng-deep .ag-theme-alpine {
+  height: 100%;
+  width: 100%;
+}
+
+// Add this to your existing CSS
+
+.pagination-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+  background: #f8f9fa;
+  border-top: 1px solid #e0e0e0;
+  border-radius: 0 0 8px 8px;
+  
+  .pagination-info {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    
+    .page-size-selector {
+      width: 100px;
+      
+      ::ng-deep .mat-mdc-form-field-wrapper {
+        padding-bottom: 0;
+      }
+    }
+    
+    .row-info {
+      font-size: 14px;
+      color: #666;
+    }
+  }
+  
+  .pagination-controls {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    
+    .page-numbers {
+      display: flex;
+      gap: 4px;
+      
+      button {
+        min-width: 40px;
+        
+        &.current-page {
+          background-color: #2196f3;
+          color: white;
+        }
+      }
+    }
+  }
+  
+  .page-info {
+    font-size: 14px;
+    color: #666;
+    min-width: 120px;
+    text-align: right;
+  }
+}
+
+// Responsive pagination
+@media (max-width: 768px) {
+  .pagination-container {
+    flex-direction: column;
+    gap: 12px;
+    
+    .pagination-info {
+      flex-direction: column;
+      gap: 8px;
+      align-items: flex-start;
+    }
+    
+    .page-info {
+      text-align: center;
+    }
+  }
+}

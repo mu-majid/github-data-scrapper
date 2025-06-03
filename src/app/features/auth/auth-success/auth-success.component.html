@@ -1,0 +1,22 @@
+<div class="container">
+  <mat-card class="success-card">
+    <mat-card-content>
+      <div class="success-content">
+        <mat-icon class="success-icon" color="primary">check_circle</mat-icon>
+        <h2>GitHub Integration Successful!</h2>
+        <p>Your GitHub account has been successfully connected.</p>
+        
+        <div *ngIf="isProcessing" class="processing">
+          <mat-spinner diameter="30"></mat-spinner>
+          <p>Processing authentication...</p>
+        </div>
+        
+        <div *ngIf="!isProcessing" class="actions">
+          <button mat-raised-button color="primary" (click)="goToIntegration()">
+            Continue to Integration
+          </button>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>

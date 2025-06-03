@@ -1,0 +1,121 @@
+.container {
+  max-width: 800px;
+  margin: 20px auto;
+  padding: 0 16px;
+}
+
+.spacer {
+  flex: 1 1 auto;
+}
+
+.integration-card {
+  margin-bottom: 20px;
+}
+
+.github-avatar {
+  background-color: #333;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.connect-section {
+  text-align: center;
+  padding: 20px 0;
+}
+
+.connected-section {
+  padding: 16px 0;
+}
+
+.connection-status {
+  display: flex;
+  align-items: center;
+  margin-bottom: 24px;
+  padding: 16px;
+  background-color: #f5f5f5;
+  border-radius: 4px;
+}
+
+.success-icon {
+  font-size: 24px;
+  margin-right: 12px;
+}
+
+.status-info {
+  flex: 1;
+}
+
+.admin-info {
+  font-size: 16px;
+  margin-bottom: 4px;
+}
+
+.last-synced {
+  color: #666;
+  font-size: 14px;
+  margin-left: 16px;
+}
+
+.sync-type {
+  color: #666;
+  font-size: 14px;
+}
+
+.sync-section {
+  margin: 24px 0;
+}
+
+.sync-section h3 {
+  margin-bottom: 16px;
+  color: #333;
+}
+
+.sync-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.stat-item {
+  padding: 12px;
+  background-color: #f8f9fa;
+  border-radius: 4px;
+  border-left: 4px solid #2196f3;
+}
+
+.sync-actions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.remove-panel {
+  margin-top: 24px;
+}
+
+.panel-content {
+  padding: 16px 0;
+}
+
+.panel-content p {
+  margin-bottom: 16px;
+  color: #666;
+}
+
+mat-spinner {
+  margin-right: 8px;
+}
+
+@media (max-width: 600px) {
+  .sync-stats {
+    grid-template-columns: 1fr;
+  }
+  
+  .sync-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}

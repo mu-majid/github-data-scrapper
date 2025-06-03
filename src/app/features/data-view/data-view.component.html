@@ -1,0 +1,143 @@
+<mat-toolbar color="primary">
+  <span>Raw Data</span>
+  <span class="spacer"></span>
+  <button mat-button routerLink="/integration">
+    <mat-icon>arrow_back</mat-icon>
+    Back to Integration
+  </button>
+</mat-toolbar>
+
+<div class="container">
+  <!-- Header Controls -->
+  <div class="header-controls">
+    <div class="demo-info">
+      <span class="demo-badge">Demo 04</span>
+      <span class="demo-date">2024-01-01 - 2024-12-31</span>
+      <span class="user-info">Logged in as m.majid&#64;sredio.io</span>
+    </div>
+    
+    <div class="controls-row">
+      <button mat-raised-button color="primary" class="view-grid-btn">View Grid</button>
+      <button mat-stroked-button class="search-btn">New Global Search Grid</button>
+    </div>
+  </div>
+
+  <!-- Filter Controls -->
+  <div class="filter-controls">
+    <mat-form-field appearance="outline" class="select-field">
+      <mat-label>Active Integrations</mat-label>
+      <mat-select [(value)]="selectedIntegration">
+        <mat-option value="Github">Github</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="select-field">
+      <mat-label>Entity</mat-label>
+      <mat-select [(value)]="selectedEntity" (selectionChange)="onEntityChange()">
+        <mat-option *ngFor="let collection of collections" [value]="collection.name">
+          {{ collection.label }} ({{ collection.count }})
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="search-field">
+      <mat-label>Search</mat-label>
+      <input matInput [(ngModel)]="searchTerm" (keyup.enter)="onSearch()">
+      <mat-icon matSuffix (click)="onSearch()" style="cursor: pointer;">search</mat-icon>
+    </mat-form-field>
+
+    <button mat-raised-button color="warn" class="delete-grid-btn">Delete Grid</button>
+  </div>
+
+  <!-- AG Grid -->
+  <div class="grid-container">
+    <ag-grid-angular
+      #agGrid
+      class="ag-theme-alpine"
+      [columnDefs]="columnDefs"
+      [defaultColDef]="defaultColDef"
+      [rowSelection]="rowSelection"
+      [rowData]="rowData"
+      [pagination]="false"
+      [suppressMenuHide]="true"
+      [animateRows]="true"
+      (gridReady)="onGridReady($event)"
+      (sortChanged)="onSortChanged()"
+      (filterChanged)="onFilterChanged()">
+    </ag-grid-angular>
+  </div>
+
+  <!-- Custom Pagination Controls -->
+  <div class="pagination-container" *ngIf="totalRows > 0">
+    <div class="pagination-info">
+      <mat-form-field appearance="outline" class="page-size-selector">
+        <mat-label>Page Size</mat-label>
+        <mat-select [(value)]="pageSize" (selectionChange)="onPageSizeChange($event.value)">
+          <mat-option *ngFor="let size of pageSizeOptions" [value]="size">
+            {{ size }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+      
+      <span class="row-info">
+        Showing {{ (currentPage - 1) * pageSize + 1 }} to 
+        {{ Math.min(currentPage * pageSize, totalRows) }} of 
+        {{ totalRows }} entries
+      </span>
+    </div>
+
+    <div class="pagination-controls">
+      <button 
+        mat-icon-button 
+        [disabled]="currentPage === 1"
+        (click)="onFirstPage()"
+        matTooltip="First Page">
+        <mat-icon>first_page</mat-icon>
+      </button>
+      
+      <button 
+        mat-icon-button 
+        [disabled]="currentPage === 1"
+        (click)="onPreviousPage()"
+        matTooltip="Previous Page">
+        <mat-icon>chevron_left</mat-icon>
+      </button>
+
+      <div class="page-numbers">
+        <button 
+          *ngFor="let page of getPageNumbers()" 
+          mat-button
+          [class.current-page]="page === currentPage"
+          (click)="onPageChange(page)">
+          {{ page }}
+        </button>
+      </div>
+
+      <button 
+        mat-icon-button 
+        [disabled]="currentPage === totalPages"
+        (click)="onNextPage()"
+        matTooltip="Next Page">
+        <mat-icon>chevron_right</mat-icon>
+      </button>
+      
+      <button 
+        mat-icon-button 
+        [disabled]="currentPage === totalPages"
+        (click)="onLastPage()"
+        matTooltip="Last Page">
+        <mat-icon>last_page</mat-icon>
+      </button>
+    </div>
+
+    <div class="page-info">
+      Page {{ currentPage }} of {{ totalPages }}
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="loading-overlay">
+    <mat-spinner diameter="40"></mat-spinner>
+    <span style="margin-left: 10px;">Loading data...</span>
+  </div>
+</div>
