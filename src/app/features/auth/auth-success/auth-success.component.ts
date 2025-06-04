@@ -30,14 +30,11 @@ export class AuthSuccessComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    // Extract token from URL query parameters
     this.route.queryParams.subscribe(params => {
       const token = params['token'];
       
       if (token) {
-        // Save the token and check auth status
         this.authService.setToken(token);
-        
         // Give a moment for the auth status to update
         setTimeout(() => {
           this.authService.checkAuthStatus().subscribe({
@@ -46,13 +43,12 @@ export class AuthSuccessComponent implements OnInit {
             },
             error: (error) => {
               console.error('Auth status check failed:', error);
+              // continue as token is saved
               this.isProcessing = false;
-              // Still allow to continue as token is saved
             }
           });
         }, 1000);
       } else {
-        // No token provided, redirect to failure
         this.router.navigate(['/auth/failure'], {
           queryParams: { error: 'no_token' }
         });
