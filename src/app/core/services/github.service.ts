@@ -45,19 +45,7 @@ export class GitHubService {
   getSyncStatus(): Observable<SyncStatusResponse> {
     return this.http.get<SyncStatusResponse>(`${this.baseUrl}/github/sync-status`);
   }
-
-  getRateLimit(): Observable<any> {
-    return this.http.get(`${this.baseUrl}/github/rate-limit`);
-  }
-
-  getOrganizations(): Observable<any> {
-    return this.http.get(`${this.baseUrl}/github/organizations`);
-  }
-
-  validateToken(): Observable<any> {
-    return this.http.get(`${this.baseUrl}/github/validate-token`);
-  }
-
+  
   // Testing 
   syncJupyterTestData(): Observable<SyncResponse> {
     return this.http.post<SyncResponse>(`${this.baseUrl}/github/sync-jupyter`, {});

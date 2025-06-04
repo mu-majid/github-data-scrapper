@@ -84,24 +84,4 @@ export class DataService {
   getCollectionFields(collectionName: string): Observable<FieldsResponse> {
     return this.http.get<FieldsResponse>(`${this.baseUrl}/data/collection/${collectionName}/fields`);
   }
-
-  getCollectionStats(collectionName: string): Observable<any> {
-    return this.http.get(`${this.baseUrl}/data/collection/${collectionName}/stats`);
-  }
-
-  searchAllCollections(query: string, limit: number = 10): Observable<any> {
-    let httpParams = new HttpParams()
-      .set('query', query)
-      .set('limit', limit.toString());
-
-    return this.http.get(`${this.baseUrl}/data/search`, { params: httpParams });
-  }
-
-  deleteRecord(collectionName: string, recordId: string): Observable<any> {
-    return this.http.delete(`${this.baseUrl}/data/collection/${collectionName}/record/${recordId}`);
-  }
-
-  clearCollection(collectionName: string): Observable<any> {
-    return this.http.delete(`${this.baseUrl}/data/collection/${collectionName}/clear`);
-  }
 }
