@@ -4,6 +4,8 @@ Angular 19 frontend application for GitHub OAuth integration with AG Grid data v
 
 ## Features
 
+**Check file README.flow.md**
+
 - **GitHub OAuth Integration**: Complete OAuth 2.0 flow with GitHub
 - **Angular Material UI**: Modern, responsive design
 - **AG Grid**: Advanced data grid with filtering, sorting, and pagination

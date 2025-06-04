@@ -26,14 +26,17 @@ FRONTEND_URL=http://localhost:4200
 
 **Backend:**
 ```bash
-cd backend
-npm start
+cd backend-project
+npm install
+make build
+make up
 # Should run on http://localhost:3000
 ```
 
 **Frontend:**
 ```bash
-cd frontend  
+cd frontend-project  
+npm install
 ng serve
 # Should run on http://localhost:4200
 ```
@@ -44,7 +47,7 @@ ng serve
 2. **You should see**: The integration page with a "Connect" button
 3. **Click "Connect"**: This triggers the OAuth flow
 4. **GitHub redirect**: You'll be redirected to GitHub for authorization
-5. **Authorize**: Click "Authorize" on GitHub
+5. **Authorize**: Click "Authorize" on GitHub - DON'T forget to authorise access to organisations as well
 6. **Success redirect**: You'll be redirected back to your app
 7. **Connected state**: You should see the green checkmark and user info
 
@@ -52,6 +55,8 @@ ng serve
 
 After successful connection:
 1. **Click "Sync Now"**: This will fetch your GitHub data
+1. **Click "Sync Jupyter Now"**: This will fetch your Jupyter's org data - used it for testing
+
 2. **View Data**: Click "View Data" to see the AG Grid
 3. **Browse Collections**: Use the Entity dropdown to switch between data types
 
