@@ -69,7 +69,6 @@ export class DataViewComponent implements OnInit {
   public totalPages = 0;
   public pageSizeOptions = [25, 50, 100, 200];
 
-  // Current state
   private currentSearch = '';
   private currentSort = { field: 'createdAt', direction: 'desc' };
   Math = Math;
@@ -175,8 +174,7 @@ export class DataViewComponent implements OnInit {
           const firstWithData = this.collections.find(c => c.count > 0);
           if (firstWithData) {
             this.selectedEntity = firstWithData.name;
-            // Only load data if grid is ready
-            if (this.gridApi) {
+            if (this.gridApi) { // ready?
               this.loadCollectionData();
             }
           }
@@ -227,21 +225,17 @@ export class DataViewComponent implements OnInit {
         this.isLoading = false;
         
         if (response.success) {
-          console.log('Server response:', response);
-          
-          // Update pagination info
+          console.log('Server response:', response);          
           this.totalRows = response.pagination.total;
           this.totalPages = response.pagination.pages;
-          
-          // Set data to grid
           this.rowData = response.data;
           
-          if (this.gridApi) {
+          if (this.gridApi) { // ready ?
             this.gridApi.setGridOption('rowData', this.rowData);
           }
-
           console.log(`Loaded page ${this.currentPage} of ${this.totalPages}, showing ${response.data.length} rows of ${this.totalRows} total`);
-        } else {
+        } 
+        else {
           this.snackBar.open('Failed to load data', 'Close', {
             duration: 5000,
             panelClass: ['error-snackbar']
