@@ -8,8 +8,9 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { RouterModule } from '@angular/router';
-import { AuthService, GitHubIntegration } from '../../core/services/auth.service';
+import { AuthService } from '../../core/services/auth.service';
 import { GitHubService } from '../../core/services/github.service';
+import { GitHubIntegration } from '../../core/models/auth.model';
 
 @Component({
   selector: 'app-integration',

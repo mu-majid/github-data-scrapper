@@ -1,0 +1,105 @@
+<mat-card class="faceted-search">
+  <mat-card-header>
+    <mat-card-title>
+      Faceted Search
+      <mat-chip *ngIf="activeFacets.length > 0" color="primary">
+        {{ activeFacets.length }} active
+      </mat-chip>
+    </mat-card-title>
+    <button mat-button (click)="showAllFacets = !showAllFacets">
+      {{ showAllFacets ? 'Hide' : 'Show' }} Facets
+    </button>
+    <button mat-button color="warn" (click)="clearAllFacets()" 
+            *ngIf="activeFacets.length > 0">
+      Clear All
+    </button>
+  </mat-card-header>
+  
+  <mat-card-content *ngIf="showAllFacets">
+    <mat-accordion>
+      <mat-expansion-panel *ngFor="let facet of facets" [expanded]="getSelectedCount(facet) > 0">
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            {{ facet.field }}
+            <mat-badge [matBadge]="getSelectedCount(facet)" 
+                      *ngIf="getSelectedCount(facet) > 0"
+                      color="accent">
+            </mat-badge>
+          </mat-panel-title>
+        </mat-expansion-panel-header>
+        
+        <!-- String/Boolean Facets -->
+        <div *ngIf="facet.type === 'string' || facet.type === 'boolean'" class="facet-values">
+          <div *ngFor="let value of facet.values" class="facet-value">
+            <mat-checkbox 
+              [checked]="value.selected"
+              (change)="toggleFacetValue(facet, value)">
+              {{ value.value || '(empty)' }} ({{ value.count }})
+            </mat-checkbox>
+          </div>
+        </div>
+        
+        <!-- Number Range Facets -->
+        <div *ngIf="facet.type === 'number' && facet.range" class="facet-range">
+          <mat-form-field appearance="outline">
+            <mat-label>Min</mat-label>
+            <input matInput type="number" 
+                   [(ngModel)]="facet.selectedRange!.min"
+                   [placeholder]="facet.range.min.toString()"
+                   (change)="updateRangeFacet(facet)">
+          </mat-form-field>
+          
+          <mat-form-field appearance="outline">
+            <mat-label>Max</mat-label>
+            <input matInput type="number" 
+                   [(ngModel)]="facet.selectedRange!.max"
+                   [placeholder]="facet.range.max.toString()"
+                   (change)="updateRangeFacet(facet)">
+          </mat-form-field>
+        </div>
+        
+        <!-- Date Range Facets -->
+        <div *ngIf="facet.type === 'date' && facet.range" class="facet-range">
+          <mat-form-field appearance="outline">
+            <mat-label>Start Date</mat-label>
+            <input matInput [matDatepicker]="startPicker" 
+                   [(ngModel)]="facet.selectedRange!.min"
+                   (dateChange)="updateRangeFacet(facet)">
+            <mat-datepicker-toggle matSuffix [for]="startPicker"></mat-datepicker-toggle>
+            <mat-datepicker #startPicker></mat-datepicker>
+          </mat-form-field>
+          
+          <mat-form-field appearance="outline">
+            <mat-label>End Date</mat-label>
+            <input matInput [matDatepicker]="endPicker" 
+                   [(ngModel)]="facet.selectedRange!.max"
+                   (dateChange)="updateRangeFacet(facet)">
+            <mat-datepicker-toggle matSuffix [for]="endPicker"></mat-datepicker-toggle>
+            <mat-datepicker #endPicker></mat-datepicker>
+          </mat-form-field>
+        </div>
+        
+        <mat-action-row>
+          <button mat-button color="warn" (click)="clearFacet(facet)">
+            Clear
+          </button>
+        </mat-action-row>
+      </mat-expansion-panel>
+    </mat-accordion>
+  </mat-card-content>
+  
+  <!-- Active Facets Summary -->
+  <mat-card-content *ngIf="activeFacets.length > 0 && !showAllFacets">
+    <div class="active-facets">
+      <h4>Active Filters:</h4>
+      <mat-chip-set>
+        <mat-chip *ngFor="let facet of activeFacets" (removed)="clearFacet(facet)">
+          {{ facet.field }}: 
+          <span *ngIf="facet.selectedValues">{{ facet.selectedValues.length }} selected</span>
+          <span *ngIf="facet.selectedRange">range</span>
+          <mat-icon matChipRemove>cancel</mat-icon>
+        </mat-chip>
+      </mat-chip-set>
+    </div>
+  </mat-card-content>
+</mat-card>

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatToolbarModule } from '@angular/material/toolbar';
@@ -10,13 +10,20 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { Router, RouterModule } from '@angular/router';
+import { RouterModule } from '@angular/router';
 import { AgGridAngular } from 'ag-grid-angular';
 import { ColDef, GridApi, GridReadyEvent, ModuleRegistry, AllCommunityModule } from 'ag-grid-community';
-import { DataService, Collection, FieldDefinition, CollectionDataResponse } from '../../core/services/data.service';
-import { MatDialog } from '@angular/material/dialog';
+import { DataService } from '../../core/services/data.service';
 import { MatCardModule } from '@angular/material/card';
 import { MatExpansionModule } from '@angular/material/expansion';
+import { Collection, CollectionDataResponse, FieldDefinition } from '../../core/models/data.model';
+import { Subject, takeUntil } from 'rxjs';
+
+// Add new imports for filters
+import { FilterManagementComponent } from '../filters/filter-management.component';
+import { FacetedSearchComponent, Facet } from '../filters/faceted-search.component';
+import { Filter } from '../../core/models/filter.model';
+import { FilterService } from '../../core/services/filter.service';
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
@@ -44,17 +51,19 @@ ModuleRegistry.registerModules([AllCommunityModule]);
     MatProgressSpinnerModule,
     MatSnackBarModule,
     MatToolbarModule,
+    // Add new components
+    FilterManagementComponent,
+    FacetedSearchComponent
   ],
   templateUrl: './data-view.component.html',
   styleUrls: ['./data-view.component.scss']
 })
-export class DataViewComponent implements OnInit {
+export class DataViewComponent implements OnInit, OnDestroy {
   public themeClass: string = 'ag-theme-quartz';
   collections: Collection[] = [];
   selectedIntegration = 'Github';
   selectedEntity = '';
   searchTerm = '';
-
   rowSelection = {
     mode: 'multiRow' as const,
     checkboxes: false,
@@ -99,15 +108,25 @@ export class DataViewComponent implements OnInit {
   private currentSearch = '';
   private currentSort = { field: 'createdAt', direction: 'desc' };
   Math = Math;
+
+  // Add new properties for custom filters and faceted search
+  activeFilter: Filter | null = null;
+  facets: Facet[] = [];
+  private destroy$ = new Subject<void>();
+
   constructor(
     private dataService: DataService,
     private snackBar: MatSnackBar,
-    private dialog: MatDialog,
-    private router: Router
+    private filterService: FilterService
   ) { }
 
   ngOnInit(): void {
     this.loadCollections();
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   onGridReady(params: GridReadyEvent): void {
@@ -117,6 +136,7 @@ export class DataViewComponent implements OnInit {
     // If we have a selected entity, load data
     if (this.selectedEntity) {
       this.loadCollectionData();
+      this.loadActiveFilters();
     }
   }
 
@@ -194,7 +214,41 @@ export class DataViewComponent implements OnInit {
       this.hasSearchResults = false;
       this.searchTerm = '';
       this.loadCollectionData();
+      this.loadActiveFilters();
     }
+  }
+
+  // Add new method to load active filters
+  loadActiveFilters(): void {
+    if (!this.selectedEntity) return;
+    
+    this.filterService.getActiveFiltersForCollection(this.selectedEntity)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (filters) => {
+          this.activeFilter = filters.length > 0 ? filters[0] : null;
+          if (this.activeFilter) {
+            this.loadCollectionData();
+          }
+        },
+        error: (error) => {
+          console.error('Error loading active filters:', error);
+        }
+      });
+  }
+
+  // Add new method for filter application
+  onFilterApplied(filter: Filter | null): void {
+    this.activeFilter = filter;
+    this.currentPage = 1;
+    this.loadCollectionData();
+  }
+
+  // Add new method for faceted search
+  onFacetsChanged(facets: Facet[]): void {
+    this.facets = facets;
+    this.currentPage = 1;
+    this.loadCollectionData();
   }
 
   clearAllFilters(): void {
@@ -204,6 +258,9 @@ export class DataViewComponent implements OnInit {
     this.searchTerm = '';
     this.hasSearchResults = false;
     this.currentPage = 1;
+    // Clear custom filters and facets
+    this.activeFilter = null;
+    this.facets = [];
     this.loadCollectionData();
   }
 
@@ -263,7 +320,6 @@ export class DataViewComponent implements OnInit {
       this.applyFilters();
     }
   }
-
 
   onSearch(): void {
     if (this.selectedEntity) {
@@ -345,6 +401,7 @@ export class DataViewComponent implements OnInit {
             this.selectedEntity = firstWithData.name;
             if (this.gridApi) { // ready?
               this.loadCollectionData();
+              this.loadActiveFilters();
             }
           }
         }
@@ -362,13 +419,26 @@ export class DataViewComponent implements OnInit {
   private fetchData(): void {
     this.isLoading = true;
 
-    this.dataService.getCollectionData(this.selectedEntity, {
+    // Build parameters object
+    const params: any = {
       page: this.currentPage,
       limit: this.pageSize,
       search: this.currentSearch,
       sortBy: this.currentSort.field,
       sortOrder: this.currentSort.direction as any
-    }).subscribe({
+    };
+
+    // Add active filter ID if present
+    if (this.activeFilter) {
+      params.activeFilterId = this.activeFilter._id;
+    }
+
+    // Add facet query if present
+    if (this.facets.length > 0) {
+      params.facetQuery = JSON.stringify(this.buildFacetQuery());
+    }
+
+    this.dataService.getCollectionData(this.selectedEntity, params).subscribe({
       next: (response: CollectionDataResponse) => {
         this.isLoading = false;
 
@@ -393,7 +463,27 @@ export class DataViewComponent implements OnInit {
     });
   }
 
-  // Create column definitions from actual data - shows ALL columns
+  // Add new method to build facet query
+  private buildFacetQuery(): any {
+    const query: any = {};
+    
+    this.facets.forEach(facet => {
+      if (facet.selectedValues && facet.selectedValues.length > 0) {
+        query[facet.field] = { $in: facet.selectedValues };
+      } else if (facet.selectedRange) {
+        query[facet.field] = {};
+        if (facet.selectedRange.min !== undefined) {
+          query[facet.field].$gte = facet.selectedRange.min;
+        }
+        if (facet.selectedRange.max !== undefined) {
+          query[facet.field].$lte = facet.selectedRange.max;
+        }
+      }
+    });
+    
+    return query;
+  }
+
   private createColumnDefsFromData(): void {
     if (!this.rowData || this.rowData.length === 0) {
       this.columnDefs = [];
@@ -637,7 +727,6 @@ export class DataViewComponent implements OnInit {
     }
   }
 
-  // Add these utility methods for column management
   autoSizeColumns(): void {
     if (this.gridApi) {
       this.gridApi.autoSizeAllColumns();

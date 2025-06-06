@@ -1,0 +1,40 @@
+.faceted-search {
+  margin-bottom: 20px;
+
+  mat-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+
+    mat-card-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+  }
+
+  .facet-values {
+    max-height: 200px;
+    overflow-y: auto;
+
+    .facet-value {
+      padding: 5px 0;
+    }
+  }
+
+  .facet-range {
+    display: flex;
+    gap: 10px;
+
+    mat-form-field {
+      flex: 1;
+    }
+  }
+
+  .active-facets {
+    h4 {
+      margin-bottom: 10px;
+    }
+  }
+}

@@ -2,58 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
-
-export interface Collection {
-  name: string;
-  label: string;
-  count: number;
-}
-
-export interface CollectionsResponse {
-  success: boolean;
-  collections: Collection[];
-}
-
-export interface FieldDefinition {
-  field: string;
-  headerName: string;
-  type: string;
-  sortable: boolean;
-  filter: boolean;
-  resizable: boolean;
-  width: number;
-  cellRenderer?: string;
-}
-
-export interface FieldsResponse {
-  success: boolean;
-  fields: FieldDefinition[];
-  message?: string;
-}
-
-export interface CollectionDataResponse {
-  success: boolean;
-  data: any[];
-  flattenedData: any[]
-  pagination: {
-    page: number;
-    limit: number;
-    total: number;
-    pages: number;
-  };
-  fields: string[];
-  search: string;
-  sortBy: string;
-  sortOrder: string;
-}
-
-export interface SearchParams {
-  page?: number;
-  limit?: number;
-  search?: string;
-  sortBy?: string;
-  sortOrder?: 'asc' | 'desc';
-}
+import { CollectionsResponse, SearchParams, CollectionDataResponse, FieldsResponse } from '../models/data.model';
 
 @Injectable({
   providedIn: 'root'
@@ -107,5 +56,9 @@ export class DataService {
     return this.http.get(`${this.baseUrl}/search/smart`, {
       params: { query, collection, page: page.toString(), limit: limit.toString() }
     });
+  }
+
+  getFacetValues(collection: string, field: string): Observable<any[]> {
+    return this.http.get<any[]>(`${this.baseUrl}/collection/${collection}/facets/${field}`);
   }
 }

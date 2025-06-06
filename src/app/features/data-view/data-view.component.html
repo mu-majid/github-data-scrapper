@@ -142,6 +142,20 @@
   </mat-expansion-panel>
 
 
+  <app-filter-management 
+    *ngIf="selectedCollection" 
+    [collection]="selectedCollection"
+    (filterApplied)="onFilterApplied($event)">
+  </app-filter-management>
+
+  <!-- Add faceted search component -->
+  <app-faceted-search
+    *ngIf="selectedCollection"
+    [collection]="selectedCollection"
+    [availableFields]="columnDefs"
+    (facetsChanged)="onFacetsChanged($event)">
+  </app-faceted-search>
+
   <div class="grid-controls">
     <div class="control-buttons">
       <button mat-button (click)="autoSizeColumns()">Auto Size All</button>

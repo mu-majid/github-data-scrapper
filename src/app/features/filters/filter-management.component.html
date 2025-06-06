@@ -1,0 +1,204 @@
+<div class="filter-management">
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>Custom Filters</mat-card-title>
+      <button mat-button color="primary" (click)="showCreateForm = !showCreateForm">
+        <mat-icon>{{ showCreateForm ? 'close' : 'add' }}</mat-icon>
+        {{ showCreateForm ? 'Cancel' : 'Create Filter' }}
+      </button>
+    </mat-card-header>
+    
+    <mat-card-content>
+      <!-- Filter Creation Form -->
+      <div *ngIf="showCreateForm" class="filter-form">
+        <form [formGroup]="filterForm" (ngSubmit)="saveFilter()">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Filter Name</mat-label>
+            <input matInput formControlName="name" required>
+          </mat-form-field>
+          
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Description</mat-label>
+            <textarea matInput formControlName="description" rows="2"></textarea>
+          </mat-form-field>
+          
+          <!-- Date Range Filter -->
+          <mat-expansion-panel>
+            <mat-expansion-panel-header>
+              <mat-panel-title>
+                <mat-checkbox formControlName="enableDateRange" (click)="$event.stopPropagation()">
+                  Date Range Filter
+                </mat-checkbox>
+              </mat-panel-title>
+            </mat-expansion-panel-header>
+            
+            <div formGroupName="dateRange" *ngIf="filterForm.get('enableDateRange')?.value">
+              <mat-form-field appearance="outline">
+                <mat-label>Field</mat-label>
+                <mat-select formControlName="field">
+                  <mat-option *ngFor="let field of availableFields" [value]="field">
+                    {{ field }}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+              
+              <mat-form-field appearance="outline">
+                <mat-label>Start Date</mat-label>
+                <input matInput [matDatepicker]="startPicker" formControlName="startDate">
+                <mat-datepicker-toggle matSuffix [for]="startPicker"></mat-datepicker-toggle>
+                <mat-datepicker #startPicker></mat-datepicker>
+              </mat-form-field>
+              
+              <mat-form-field appearance="outline">
+                <mat-label>End Date</mat-label>
+                <input matInput [matDatepicker]="endPicker" formControlName="endDate">
+                <mat-datepicker-toggle matSuffix [for]="endPicker"></mat-datepicker-toggle>
+                <mat-datepicker #endPicker></mat-datepicker>
+              </mat-form-field>
+            </div>
+          </mat-expansion-panel>
+          
+          <!-- Status Filter -->
+          <mat-expansion-panel>
+            <mat-expansion-panel-header>
+              <mat-panel-title>
+                <mat-checkbox formControlName="enableStatus" (click)="$event.stopPropagation()">
+                  Status Filter
+                </mat-checkbox>
+              </mat-panel-title>
+            </mat-expansion-panel-header>
+            
+            <div formGroupName="status" *ngIf="filterForm.get('enableStatus')?.value">
+              <mat-form-field appearance="outline">
+                <mat-label>Field</mat-label>
+                <mat-select formControlName="field">
+                  <mat-option *ngFor="let field of availableFields" [value]="field">
+                    {{ field }}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+              
+              <mat-form-field appearance="outline">
+                <mat-label>Values</mat-label>
+                <mat-chip-grid #chipGrid>
+                  <mat-chip-row *ngFor="let value of filterForm.get('status.values')?.value"
+                                (removed)="removeStatusValue(value)">
+                    {{ value }}
+                    <mat-icon matChipRemove>cancel</mat-icon>
+                  </mat-chip-row>
+                  <input placeholder="Add value..."
+                         [matChipInputFor]="chipGrid"
+                         [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+                         (matChipInputTokenEnd)="addStatusValue($event)">
+                </mat-chip-grid>
+              </mat-form-field>
+            </div>
+          </mat-expansion-panel>
+          
+          <!-- Custom Fields -->
+          <mat-expansion-panel>
+            <mat-expansion-panel-header>
+              <mat-panel-title>
+                Custom Field Filters
+              </mat-panel-title>
+            </mat-expansion-panel-header>
+            
+            <div formArrayName="customFields">
+              <div *ngFor="let field of customFields.controls; let i = index" [formGroupName]="i" class="custom-field">
+                <mat-form-field appearance="outline">
+                  <mat-label>Field</mat-label>
+                  <mat-select formControlName="field">
+                    <mat-option *ngFor="let field of availableFields" [value]="field">
+                      {{ field }}
+                    </mat-option>
+                  </mat-select>
+                </mat-form-field>
+                
+                <mat-form-field appearance="outline">
+                  <mat-label>Operator</mat-label>
+                  <mat-select formControlName="operator">
+                    <mat-option *ngFor="let op of operators" [value]="op.value">
+                      {{ op.label }}
+                    </mat-option>
+                  </mat-select>
+                </mat-form-field>
+                
+                <mat-form-field appearance="outline">
+                  <mat-label>Value</mat-label>
+                  <input matInput formControlName="value">
+                </mat-form-field>
+                
+                <button mat-icon-button color="warn" (click)="removeCustomField(i)" type="button">
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </div>
+              
+              <button mat-button color="primary" (click)="addCustomField()" type="button">
+                <mat-icon>add</mat-icon> Add Custom Field
+              </button>
+            </div>
+          </mat-expansion-panel>
+          
+          <div class="form-actions">
+            <button mat-raised-button color="primary" type="submit" [disabled]="!filterForm.valid">
+              {{ editingFilter ? 'Update' : 'Create' }} Filter
+            </button>
+            <button mat-button type="button" (click)="resetForm()">Cancel</button>
+          </div>
+        </form>
+      </div>
+      
+      <!-- Saved Filters List -->
+      <div class="filters-list">
+        <h3>Saved Filters</h3>
+        <div *ngIf="filters.length === 0" class="no-filters">
+          No filters created yet.
+        </div>
+        
+        <mat-card *ngFor="let filter of filters" class="filter-card">
+          <mat-card-header>
+            <mat-card-title>{{ filter.name }}</mat-card-title>
+            <mat-slide-toggle 
+              [checked]="filter.isActive"
+              (change)="toggleFilter(filter)"
+              color="primary">
+              Active
+            </mat-slide-toggle>
+          </mat-card-header>
+          
+          <mat-card-content>
+            <p *ngIf="filter.description">{{ filter.description }}</p>
+            
+            <div class="filter-details">
+              <div *ngIf="filter.filters.dateRange" class="filter-item">
+                <strong>Date Range:</strong> {{ filter.filters.dateRange.field }} 
+                ({{ filter.filters.dateRange.startDate | date }} - {{ filter.filters.dateRange.endDate | date }})
+              </div>
+              
+              <div *ngIf="filter.filters.status" class="filter-item">
+                <strong>Status:</strong> {{ filter.filters.status.field }} 
+                <mat-chip-set>
+                  <mat-chip *ngFor="let value of filter.filters.status.values">{{ value }}</mat-chip>
+                </mat-chip-set>
+              </div>
+              
+              <div *ngIf="filter.filters.customFields && filter.filters.customFields.length > 0" class="filter-item">
+                <strong>Custom Fields:</strong>
+                <ul>
+                  <li *ngFor="let field of filter.filters.customFields">
+                    {{ field.field }} {{ field.operator }} {{ field.value }}
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </mat-card-content>
+          
+          <mat-card-actions>
+            <button mat-button (click)="editFilter(filter)">Edit</button>
+            <button mat-button color="warn" (click)="deleteFilter(filter)">Delete</button>
+          </mat-card-actions>
+        </mat-card>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>
