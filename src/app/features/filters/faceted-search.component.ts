@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -14,21 +14,7 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatIconModule } from '@angular/material/icon';
 import { MatBadgeModule } from '@angular/material/badge';
 import { DataService } from '../../core/services/data.service';
-
-export interface Facet {
-  field: string;
-  type: 'string' | 'number' | 'date' | 'boolean';
-  values?: FacetValue[];
-  range?: { min: number | Date; max: number | Date };
-  selectedValues?: any[];
-  selectedRange?: { min: number | Date; max: number | Date };
-}
-
-export interface FacetValue {
-  value: any;
-  count: number;
-  selected?: boolean;
-}
+import { Facet, FacetValue } from '../../core/models/filter.model';
 
 @Component({
   selector: 'app-faceted-search',
@@ -60,10 +46,9 @@ export class FacetedSearchComponent implements OnInit {
   facets: Facet[] = [];
   activeFacets: Facet[] = [];
   showAllFacets = false;
-  
-  // Common facet configurations
   commonFacets = {
-    'repos': ['owner.login', 'language', 'private', 'fork', 'created_at'],
+    'repositories': ['owner.login', 'language', 'private', 'fork', 'created_at'],
+    'organizations': ['blog', 'description', 'name', 'email'],
     'commits': ['author.login', 'committer.login', 'commit.author.date'],
     'pulls': ['user.login', 'state', 'merged', 'created_at', 'closed_at'],
     'issues': ['user.login', 'state', 'labels', 'created_at', 'closed_at'],
@@ -72,12 +57,18 @@ export class FacetedSearchComponent implements OnInit {
 
   constructor(private dataService: DataService) {}
 
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['availableFields'] && this.availableFields.length > 0) {
+      this.initializeFacets();
+    }
+  }
+
   ngOnInit(): void {
     this.initializeFacets();
   }
 
   initializeFacets(): void {
-    console.log(this.collection)
+    console.log('FACETS -> ',this.collection)
     const fields = this.commonFacets[this.collection as keyof typeof this.commonFacets] || [];
     
     fields.forEach((field: any) => {

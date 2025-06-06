@@ -24,6 +24,7 @@ export class DataService {
     if (params.search) httpParams = httpParams.set('search', params.search);
     if (params.sortBy) httpParams = httpParams.set('sortBy', params.sortBy);
     if (params.sortOrder) httpParams = httpParams.set('sortOrder', params.sortOrder);
+    if (params.activeFilterId) httpParams = httpParams.set('activeFilterId', params.activeFilterId);
 
     return this.http.get<CollectionDataResponse>(
       `${this.baseUrl}/data/collection/${collectionName}`,

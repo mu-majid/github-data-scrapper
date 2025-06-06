@@ -21,8 +21,8 @@ import { Subject, takeUntil } from 'rxjs';
 
 // Add new imports for filters
 import { FilterManagementComponent } from '../filters/filter-management.component';
-import { FacetedSearchComponent, Facet } from '../filters/faceted-search.component';
-import { Filter } from '../../core/models/filter.model';
+import { FacetedSearchComponent } from '../filters/faceted-search.component';
+import { Facet, Filter } from '../../core/models/filter.model';
 import { FilterService } from '../../core/services/filter.service';
 
 ModuleRegistry.registerModules([AllCommunityModule]);
@@ -51,7 +51,6 @@ ModuleRegistry.registerModules([AllCommunityModule]);
     MatProgressSpinnerModule,
     MatSnackBarModule,
     MatToolbarModule,
-    // Add new components
     FilterManagementComponent,
     FacetedSearchComponent
   ],
@@ -240,6 +239,7 @@ export class DataViewComponent implements OnInit, OnDestroy {
   // Add new method for filter application
   onFilterApplied(filter: Filter | null): void {
     this.activeFilter = filter;
+    console.log('d-view onFilterApplied activeFil ', this.activeFilter, filter)
     this.currentPage = 1;
     this.loadCollectionData();
   }
@@ -399,6 +399,7 @@ export class DataViewComponent implements OnInit, OnDestroy {
           const firstWithData = this.collections.find(c => c.count > 0);
           if (firstWithData) {
             this.selectedEntity = firstWithData.name;
+            this.selectedCollection = this.selectedEntity
             if (this.gridApi) { // ready?
               this.loadCollectionData();
               this.loadActiveFilters();
@@ -418,8 +419,6 @@ export class DataViewComponent implements OnInit, OnDestroy {
 
   private fetchData(): void {
     this.isLoading = true;
-
-    // Build parameters object
     const params: any = {
       page: this.currentPage,
       limit: this.pageSize,
@@ -427,13 +426,9 @@ export class DataViewComponent implements OnInit, OnDestroy {
       sortBy: this.currentSort.field,
       sortOrder: this.currentSort.direction as any
     };
-
-    // Add active filter ID if present
     if (this.activeFilter) {
       params.activeFilterId = this.activeFilter._id;
     }
-
-    // Add facet query if present
     if (this.facets.length > 0) {
       params.facetQuery = JSON.stringify(this.buildFacetQuery());
     }
@@ -649,82 +644,6 @@ export class DataViewComponent implements OnInit, OnDestroy {
 
     // Go directly to data fetching - no need for field definitions anymore
     this.fetchData();
-  }
-
-  private setupColumnDefs(fields: FieldDefinition[]): void {
-    this.columnDefs = fields.map(field => {
-      const colDef: ColDef = {
-        field: field.field,
-        headerName: field.headerName,
-        sortable: field.sortable,
-        filter: this.getFilterType(field.type),
-        resizable: field.resizable,
-        width: field.width,
-        minWidth: 150
-      };
-
-      // Add custom cell renderers based on field type
-      switch (field.type) {
-        case 'date':
-          colDef.cellRenderer = (params: any) => {
-            if (!params.value) return '';
-            const date = new Date(params.value);
-            return date.toLocaleDateString() + ' ' + date.toLocaleTimeString();
-          };
-          break;
-
-        case 'boolean':
-          colDef.cellRenderer = (params: any) => {
-            return params.value ? '✓' : '✗';
-          };
-          break;
-
-        case 'array':
-          colDef.cellRenderer = (params: any) => {
-            if (!params.value || !Array.isArray(params.value)) return '';
-            return `[${params.value.length} items]`;
-          };
-          break;
-
-        case 'object':
-          colDef.cellRenderer = (params: any) => {
-            if (!params.value || typeof params.value !== 'object') return '';
-            return '{...}';
-          };
-          break;
-
-        case 'number':
-          if (field.field.toLowerCase().includes('id') ||
-            field.field === 'id' ||
-            field.headerName.toLowerCase().includes('id')) {
-            colDef.cellRenderer = (params: any) => {
-              if (params.value === null || params.value === undefined) return '';
-              return String(params.value);
-            };
-          } else {
-            colDef.cellRenderer = (params: any) => {
-              if (params.value === null || params.value === undefined) return '';
-              return Number(params.value).toLocaleString();
-            };
-          }
-          break;
-      }
-
-      return colDef;
-    });
-  }
-
-  private getFilterType(fieldType: string): string | boolean {
-    switch (fieldType) {
-      case 'number':
-        return 'agNumberColumnFilter';
-      case 'date':
-        return 'agDateColumnFilter';
-      case 'boolean':
-        return 'agTextColumnFilter';
-      default:
-        return 'agTextColumnFilter';
-    }
   }
 
   autoSizeColumns(): void {

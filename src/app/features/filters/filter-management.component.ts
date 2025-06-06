@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -52,8 +52,21 @@ export class FilterManagementComponent implements OnInit {
   @Output() filterApplied = new EventEmitter<Filter>();
 
   filters: Filter[] = [];
-  filterForm: FormGroup;
   showCreateForm = false;
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['collection'] && changes['collection'].currentValue) {
+      console.log('>> entity change', changes['collection'].currentValue)
+      this.loadFilters();
+    }
+  }
+
+  loadFiltersForCollection(collection: string): void {
+    const allFilters = JSON.parse(localStorage.getItem('savedFilters') || '[]');
+    this.filters = allFilters.filter((f: any) => f.collection === collection);
+  }
+
+  filterForm: FormGroup;
   editingFilter: Filter | null = null;
   availableFields: string[] = [];
   operators = [
@@ -123,8 +136,9 @@ export class FilterManagementComponent implements OnInit {
   }
 
   loadAvailableFields(): void {
-    this.dataService.getCollectionFields(this.collection).subscribe(fields => {
-      this.availableFields = fields.fields.map(f => f.field);
+    this.dataService.getCollectionFields(this.collection).subscribe((fields: any) => {
+      const { fields: fieldsDef } = fields
+      this.availableFields = fieldsDef.filter((f: any) => !f.includes('__v') || !f.includes('buffer'))
     });
   }
 
@@ -198,6 +212,7 @@ export class FilterManagementComponent implements OnInit {
     this.filterService.toggleFilter(filter._id!).subscribe(updatedFilter => {
       this.loadFilters();
       if (updatedFilter.isActive) {
+        console.log('updatedFilter ', updatedFilter)
         this.filterApplied.emit(updatedFilter);
       } else {
         this.filterApplied.emit(null as any);

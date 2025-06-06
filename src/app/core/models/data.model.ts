@@ -48,4 +48,5 @@ export interface SearchParams {
   search?: string;
   sortBy?: string;
   sortOrder?: 'asc' | 'desc';
+  activeFilterId?: string;
 }

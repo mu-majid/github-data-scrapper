@@ -30,3 +30,18 @@ export interface Filter {
   createdAt?: Date;
   updatedAt?: Date;
 }
+
+export interface Facet {
+  field: string;
+  type: 'string' | 'number' | 'date' | 'boolean';
+  values?: FacetValue[];
+  range?: { min: number | Date; max: number | Date };
+  selectedValues?: any[];
+  selectedRange?: { min: number | Date; max: number | Date };
+}
+
+export interface FacetValue {
+  value: any;
+  count: number;
+  selected?: boolean;
+}
