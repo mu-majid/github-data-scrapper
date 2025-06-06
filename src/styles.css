@@ -41,3 +41,96 @@ body {
   --ag-odd-row-background-color: #fcfcfc;
   --ag-selected-row-background-color: #e3f2fd;
 }
+
+.search-section {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.search-field {
+  flex: 1;
+  min-width: 300px;
+}
+
+.search-results-section {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.find-user-link {
+  color: #1976d2;
+  text-decoration: none;
+  font-weight: 500;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: background-color 0.3s;
+
+  &:hover {
+    background-color: rgba(25, 118, 210, 0.1);
+    text-decoration: underline;
+  }
+}
+
+.search-results-text {
+  color: #666;
+  font-size: 14px;
+}
+
+.global-search-btn {
+  white-space: nowrap;
+}
+
+.filters-panel {
+  margin-bottom: 16px;
+}
+
+.filters-content {
+  padding: 16px 0;
+}
+
+.date-range-filter {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.custom-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.faceted-search {
+  margin-bottom: 16px;
+
+  h4 {
+    margin-bottom: 12px;
+    color: #333;
+  }
+}
+
+.facet-chips {
+  margin-bottom: 12px;
+
+  .facet-label {
+    font-weight: 500;
+    margin-right: 8px;
+  }
+
+  .facet-input {
+    width: 200px;
+    margin-left: 16px;
+  }
+}
+
+.filter-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+}

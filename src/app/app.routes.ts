@@ -27,6 +27,16 @@ export const routes: Routes = [
       import('./features/auth/auth-failure/auth-failure.component').then(m => m.AuthFailureComponent)
   },
   {
+    path: 'global-search',
+    loadComponent: () => 
+      import('./features/global-search/global-search.component').then(m => m.GlobalSearchComponent)
+  },
+    {
+    path: 'find-user-grid',
+    loadComponent: () => 
+      import('./features/user-grid/find-user-grid.component').then(m => m.FindUserGridComponent)
+  },
+  {
     path: '**',
     redirectTo: '/integration'
   }

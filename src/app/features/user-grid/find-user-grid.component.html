@@ -1,0 +1,25 @@
+<!-- find-user-grid.component.html -->
+<div class="find-user-container">
+  <header class="page-header">
+    <h1>Find User Results</h1>
+    <p>Users who worked on the searched ticket</p>
+  </header>
+
+  <div *ngIf="rowData.length === 0" class="no-data">
+    <mat-icon>person_search</mat-icon>
+    <h2>No User Data Found</h2>
+    <p>No user information was found for the specified ticket.</p>
+  </div>
+
+  <div *ngIf="rowData.length > 0" class="grid-container">
+    <ag-grid-angular
+      style="width: 100%; height: calc(100vh - 120px);"
+      class="ag-theme-alpine"
+      [rowData]="rowData"
+      [columnDefs]="columnDefs"
+      [defaultColDef]="defaultColDef"
+      [pagination]="true"
+      [paginationPageSize]="50">
+    </ag-grid-angular>
+  </div>
+</div>

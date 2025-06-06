@@ -1,0 +1,62 @@
+<div class="global-search-container">
+  <div class="search-header">
+    <h2>Global Search</h2>
+    <button class="close-btn" (click)="closeWindow()">Close Window</button>
+  </div>
+
+  <div class="search-controls">
+    <div class="search-input-container">
+      <input type="text" [(ngModel)]="searchQuery" (keyup.enter)="performGlobalSearch()"
+        placeholder="Search across all collections..." class="search-input">
+      <button (click)="performGlobalSearch()" class="search-btn" type="button">Search</button>
+    </div>
+
+    <div class="collection-filters">
+      <h4>Search in Collections:</h4>
+      <div class="collection-checkboxes">
+        <label *ngFor="let collection of availableCollections" class="checkbox-label">
+          <input type="checkbox" [checked]="selectedCollections.includes(collection.key)"
+            (change)="toggleCollection(collection.key, $any($event.target).checked)">
+          <span class="checkbox-text">{{collection.name}}</span>
+        </label>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading Indicator -->
+  <div *ngIf="isLoading" class="loading-container">
+    <div class="spinner"></div>
+    <p>Searching across collections...</p>
+  </div>
+
+  <!-- Search Results Summary -->
+  <div *ngIf="!isLoading && searchResults.length > 0" class="results-summary">
+    <h3>Search Results</h3>
+    <div class="summary-cards">
+      <div *ngFor="let result of searchResults" class="result-card">
+        <div class="result-card-header">
+          <h4>{{result.collection}}</h4>
+        </div>
+        <div class="result-card-content">
+          <p>{{result.count}} results found</p>
+          <p *ngIf="result.error" class="error-text">{{result.error}}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- AG Grid with Results -->
+  <div *ngIf="!isLoading && rowData.length > 0" class="results-grid">
+    <ag-grid-angular style="width: 100%; height: 500px;" class="ag-theme-alpine" [rowData]="rowData"
+      [columnDefs]="columnDefs" [defaultColDef]="defaultColDef" [pagination]="true" [paginationPageSize]="50"
+      [theme]="'legacy'">
+    </ag-grid-angular>
+  </div>
+
+  <!-- No Results -->
+  <div *ngIf="!isLoading && searchQuery && rowData.length === 0" class="no-results">
+    <div class="no-results-icon">🔍</div>
+    <h3>No Results Found</h3>
+    <p>Try adjusting your search query or selecting different collections.</p>
+  </div>
+</div>

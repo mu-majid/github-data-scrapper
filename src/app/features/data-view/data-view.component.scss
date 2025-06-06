@@ -1,264 +1,553 @@
-@import 'ag-grid-community/styles/ag-grid.css';
-@import 'ag-grid-community/styles/ag-theme-alpine.css';
+// Main container styling
 .container {
   padding: 20px;
-  max-width: 100%;
-  overflow-x: auto;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  min-height: 100vh;
 }
 
-.header-controls {
-  margin-bottom: 20px;
-  
-  .demo-info {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    margin-bottom: 15px;
-    
-    .demo-badge {
-      background: #2196f3;
-      color: white;
-      padding: 4px 12px;
-      border-radius: 16px;
-      font-size: 12px;
-      font-weight: 500;
-    }
-    
-    .demo-date {
-      color: #666;
-      font-size: 14px;
-    }
-    
-    .user-info {
-      color: #666;
-      font-size: 14px;
-      margin-left: auto;
-    }
-  }
-  
-  .controls-row {
-    display: flex;
-    gap: 10px;
-  }
-}
-
-.filter-controls {
+// Enhanced grid controls
+.grid-controls {
   display: flex;
-  gap: 15px;
-  align-items: flex-end;
-  margin-bottom: 25px;
-  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border-radius: 12px 12px 0 0;
+  box-shadow: 0 4px 20px rgba(102, 126, 234, 0.3);
   
-  .select-field {
-    min-width: 180px;
-  }
-  
-  .search-field {
-    min-width: 250px;
-    flex: 1;
-  }
-}
-
-.grid-container {
-  height: 70vh;
-  min-height: 500px;
-  width: 100%;
-  border-radius: 8px;
-  overflow: hidden;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  border: 1px solid #e0e0e0;
-}
-
-// AG Grid Theme Customizations
-:host ::ng-deep {
-  .ag-theme-alpine {
-    height: 100%;
-    width: 100%;
+  .control-buttons {
+    display: flex;
+    gap: 12px;
     
-    // Header styling
-    .ag-header {
-      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-      border-bottom: 2px solid #2196f3;
+    button {
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      border-radius: 8px;
+      padding: 8px 16px;
+      font-weight: 500;
+      transition: all 0.3s ease;
       
-      .ag-header-cell {
-        border-right: 1px solid #e0e0e0;
-        
-        .ag-header-cell-text {
-          font-weight: 600;
-          color: #333;
-          font-size: 13px;
-        }
-        
-        &:hover {
-          background-color: rgba(33, 150, 243, 0.1);
-        }
+      &:hover {
+        background: rgba(255, 255, 255, 0.3);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
       }
     }
+  }
+  
+  .stats-info {
+    background: rgba(255, 255, 255, 0.15);
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-weight: 500;
+    backdrop-filter: blur(10px);
+  }
+}
+
+// Beautiful grid container
+.grid-container {
+  height: 600px !important;
+  width: 100%;
+  border-radius: 0 0 12px 12px;
+  overflow: hidden;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+  background: white;
+  
+  ag-grid-angular {
+    height: 100% !important;
+    width: 100% !important;
+  }
+}
+
+// Advanced AG Grid styling
+:host ::ng-deep .ag-theme-alpine {
+  --ag-header-height: 56px;
+  --ag-row-height: 48px;
+  --ag-font-size: 14px;
+  
+  // Beautiful header
+  .ag-header {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    border-bottom: 3px solid #0288d1;
     
-    // Row styling
-    .ag-row {
-      border-bottom: 1px solid #f0f0f0;
+    .ag-header-cell {
+      border-right: 1px solid rgba(255, 255, 255, 0.2);
+      color: white;
+      font-weight: 600;
+      font-size: 13px;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
       
-      &.ag-row-even {
-        background-color: #fafafa;
-      }
-      
-      &.ag-row-odd {
-        background-color: #ffffff;
+      .ag-header-cell-text {
+        color: white;
       }
       
       &:hover {
-        background-color: rgba(33, 150, 243, 0.05) !important;
+        background: rgba(255, 255, 255, 0.1);
       }
       
-      &.ag-row-selected {
-        background-color: rgba(33, 150, 243, 0.1) !important;
+      // Sort icons
+      .ag-icon-asc,
+      .ag-icon-desc {
+        color: white;
+      }
+    }
+  }
+  
+  // Row styling
+  .ag-row {
+    border-bottom: 1px solid #f0f2f5;
+    transition: all 0.2s ease;
+    
+    &.ag-row-odd {
+      background: #fafbfc;
+    }
+    
+    &.ag-row-even {
+      background: white;
+    }
+    
+    &:hover {
+      background: linear-gradient(135deg, #e3f2fd 0%, #f0f8ff 100%) !important;
+      transform: scale(1.001);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+    
+    &.ag-row-selected {
+      background: linear-gradient(135deg, #e1f5fe 0%, #b3e5fc 100%) !important;
+      border-left: 4px solid #2196f3;
+    }
+  }
+  
+  // Cell styling
+  .ag-cell {
+    border-right: 1px solid #f0f2f5;
+    display: flex;
+    align-items: center;
+    padding: 0 12px;
+    
+    // Links styling
+    a {
+      color: #1976d2;
+      text-decoration: none;
+      font-weight: 500;
+      padding: 4px 8px;
+      border-radius: 6px;
+      transition: all 0.2s ease;
+      
+      &:hover {
+        background: rgba(25, 118, 210, 0.1);
+        color: #1565c0;
+        transform: translateY(-1px);
       }
     }
     
-    // Cell styling
-    .ag-cell {
-      display: flex;
-      align-items: center;
-      padding: 8px 12px;
-      border-right: 1px solid #f0f0f0;
-      font-size: 13px;
+    // Email links
+    a[href^="mailto"] {
+      color: #d32f2f;
       
-      // Truncate long text
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-      
-      &:focus {
-        outline: 2px solid #2196f3;
-        outline-offset: -2px;
+      &:hover {
+        background: rgba(211, 47, 47, 0.1);
+        color: #c62828;
       }
     }
+  }
+  
+  // Checkbox/boolean styling
+  .ag-cell:has-text("✅") {
+    font-size: 16px;
+  }
+  
+  // Number cells alignment
+  .ag-cell[col-id*="id"],
+  .ag-cell[col-id*="followers"],
+  .ag-cell[col-id*="following"] {
+    justify-content: flex-end;
+    font-family: 'Monaco', 'Menlo', monospace;
+    font-weight: 600;
+    color: #424242;
+  }
+}
+
+// Enhanced filters panel - Light blue and grey theme
+.filters-panel {
+  margin-bottom: 0;
+  border: none;
+  border-radius: 12px;
+  background: white;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  margin-bottom: 20px;
+
+  .filters-header {
+    background: linear-gradient(135deg, #64b5f6 0%, #42a5f5 100%);
+    color: white;
+    padding: 16px 20px;
+    border: none;
     
-    // Selection checkbox styling
-    .ag-selection-checkbox {
-      .ag-input-wrapper {
-        .ag-checkbox-input {
-          accent-color: #2196f3;
+    h3 {
+      color: white;
+      font-weight: 600;
+      font-size: 16px;
+      margin: 0;
+    }
+    
+    mat-icon {
+      color: white;
+      filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+    }
+    
+    &:hover {
+      background: linear-gradient(135deg, #42a5f5 0%, #2196f3 100%);
+    }
+  }
+
+  .filters-content {
+    background: linear-gradient(135deg, #f5f7fa 0%, #eceff1 100%);
+    padding: 20px;
+    
+    .date-range-filter,
+    .custom-filters {
+      gap: 20px;
+      margin-bottom: 20px;
+      
+      // Style the date inputs
+      input[type="date"] {
+        background: white;
+        border: 2px solid #e3f2fd;
+        border-radius: 8px;
+        padding: 12px 16px;
+        font-size: 14px;
+        color: #424242;
+        transition: all 0.3s ease;
+        
+        &:focus {
+          outline: none;
+          border-color: #2196f3;
+          box-shadow: 0 0 0 3px rgba(33, 150, 243, 0.1);
+        }
+        
+        &:hover {
+          border-color: #bbdefb;
+        }
+      }
+      
+      // Style Material form fields
+      ::ng-deep .mat-mdc-form-field {
+        .mat-mdc-form-field-wrapper {
+          background: white;
+          border-radius: 8px;
+          border: 2px solid #e3f2fd;
+          transition: all 0.3s ease;
+          
+          &:hover {
+            border-color: #bbdefb;
+          }
+        }
+        
+        &.mat-focused .mat-mdc-form-field-wrapper {
+          border-color: #2196f3;
+          box-shadow: 0 0 0 3px rgba(33, 150, 243, 0.1);
+        }
+        
+        .mat-mdc-form-field-input-control input {
+          color: #424242;
+          font-weight: 500;
         }
       }
     }
     
-    // Filter styling
-    .ag-filter-toolpanel-search {
-      margin-bottom: 10px;
-    }
-    
-    // Pagination styling
-    .ag-paging-panel {
-      background: #f8f9fa;
-      border-top: 1px solid #e0e0e0;
-      padding: 12px 16px;
+    .faceted-search {
+      background: rgba(255, 255, 255, 0.8);
+      padding: 16px;
+      border-radius: 12px;
+      border: 2px solid #e3f2fd;
+      backdrop-filter: blur(10px);
       
-      .ag-paging-button {
-        &:not(.ag-disabled) {
-          color: #2196f3;
-          
-          &:hover {
-            background-color: rgba(33, 150, 243, 0.1);
+      h4 {
+        color: #424242;
+        font-weight: 600;
+        margin-bottom: 16px;
+      }
+      
+      .facet-section {
+        margin-bottom: 16px;
+        
+        .facet-label {
+          color: #546e7a;
+          font-weight: 600;
+          font-size: 14px;
+        }
+        
+        .facet-input {
+          ::ng-deep .mat-mdc-form-field {
+            .mat-mdc-form-field-wrapper {
+              background: white;
+              border: 2px solid #e3f2fd;
+              border-radius: 8px;
+              
+              &:hover {
+                border-color: #bbdefb;
+              }
+            }
+            
+            &.mat-focused .mat-mdc-form-field-wrapper {
+              border-color: #2196f3;
+              box-shadow: 0 0 0 3px rgba(33, 150, 243, 0.1);
+            }
+            
+            input {
+              color: #424242;
+              font-weight: 500;
+              
+              &::placeholder {
+                color: #90a4ae;
+              }
+            }
           }
         }
       }
       
-      .ag-paging-row-summary-panel,
-      .ag-paging-page-summary-panel {
-        font-size: 13px;
-        color: #666;
-      }
-    }
-    
-    // Scrollbar styling
-    .ag-body-horizontal-scroll,
-    .ag-body-vertical-scroll {
-      &::-webkit-scrollbar {
-        width: 8px;
-        height: 8px;
-      }
-      
-      &::-webkit-scrollbar-track {
-        background: #f1f1f1;
-        border-radius: 4px;
-      }
-      
-      &::-webkit-scrollbar-thumb {
-        background: #c1c1c1;
-        border-radius: 4px;
-        
-        &:hover {
-          background: #a1a1a1;
-        }
-      }
-    }
-    
-    // Specific column styling for different data types
-    .ag-cell {
-      // URL columns
-      &[col-id*="url"] {
-        color: #2196f3;
-        cursor: pointer;
-        
-        &:hover {
-          text-decoration: underline;
-        }
-      }
-      
-      // Email columns
-      &[col-id="email"] {
-        color: #2196f3;
-        cursor: pointer;
-        
-        &:hover {
-          text-decoration: underline;
-        }
-      }
-      
-      // Number columns
-      &[col-id="id"],
-      &[col-id="followers"],
-      &[col-id="following"],
-      &[col-id="public_repos"],
-      &[col-id="public_gists"] {
-        text-align: right;
-        font-family: 'Courier New', monospace;
+      .facet-chip {
+        background: linear-gradient(135deg, #64b5f6 0%, #42a5f5 100%);
+        color: white;
+        border-radius: 20px;
+        padding: 6px 12px;
         font-weight: 500;
+        box-shadow: 0 2px 8px rgba(100, 181, 246, 0.3);
+        border: 2px solid #e3f2fd;
+        
+        .remove-facet {
+          color: white;
+          background: rgba(255, 255, 255, 0.2);
+          border-radius: 50%;
+          width: 20px;
+          height: 20px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          
+          &:hover {
+            background: rgba(255, 255, 255, 0.3);
+          }
+        }
       }
+    }
+    
+    .filter-actions {
+      margin-top: 20px;
       
-      // Boolean columns (checkmarks)
-      &[col-id*="has_"],
-      &[col-id*="is_"] {
-        text-align: center;
-        font-size: 16px;
-      }
-      
-      // Date columns
-      &[col-id*="created"],
-      &[col-id*="updated"] {
-        font-family: 'Courier New', monospace;
-        font-size: 12px;
-        color: #666;
+      button {
+        border-radius: 8px;
+        font-weight: 500;
+        padding: 10px 24px;
+        transition: all 0.3s ease;
+        
+        &[color="primary"] {
+          background: linear-gradient(135deg, #64b5f6 0%, #42a5f5 100%);
+          box-shadow: 0 4px 12px rgba(100, 181, 246, 0.4);
+          
+          &:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(100, 181, 246, 0.5);
+            background: linear-gradient(135deg, #42a5f5 0%, #2196f3 100%);
+          }
+        }
+        
+        &:not([color="primary"]) {
+          background: #eceff1;
+          color: #546e7a;
+          border: 2px solid #cfd8dc;
+          
+          &:hover {
+            background: #cfd8dc;
+            transform: translateY(-1px);
+          }
+        }
       }
     }
   }
 }
 
-.loading-overlay {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background: rgba(255, 255, 255, 0.9);
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  z-index: 1000;
+// Enhanced search results
+.search-results-section {
+  background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+  border: 2px solid #4facfe;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(79, 172, 254, 0.3);
+  margin-bottom: 20px;
+  
+  .search-results-info {
+    padding: 16px 20px;
+  }
+  
+  .find-user-link {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-weight: 600;
+    text-decoration: none;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+    transition: all 0.3s ease;
+    
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(102, 126, 234, 0.5);
+      background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+    }
+  }
+  
+  .search-results-text {
+    color: #424242;
+    font-weight: 500;
+  }
 }
 
-// Responsive design
+// Centered and beautiful pagination
+.pagination-container {
+  background: linear-gradient(135deg, #f6f9fc 0%, #e9ecef 100%);
+  border: none;
+  border-radius: 0 0 12px 12px;
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  display: flex;
+  justify-content: center; // Center everything
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 20px;
+  
+  .pagination-info {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    order: 1; // Show first on mobile
+    
+    .page-size-selector {
+      min-width: 80px;
+      
+      ::ng-deep .mat-mdc-form-field-wrapper {
+        background: white;
+        border-radius: 6px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+      }
+    }
+    
+    .row-info {
+      color: #6c757d;
+      font-weight: 500;
+      font-size: 14px;
+      white-space: nowrap;
+    }
+  }
+  
+  .pagination-controls {
+    display: flex;
+    align-items: center;
+    justify-content: center; // Center the pagination buttons
+    gap: 8px;
+    order: 2;
+    flex: 1;
+    
+    // Navigation buttons
+    button[mat-icon-button] {
+      width: 40px;
+      height: 40px;
+      border-radius: 8px;
+      background: white;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease;
+      
+      &:hover:not([disabled]) {
+        background: rgba(102, 126, 234, 0.1);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      }
+      
+      &[disabled] {
+        opacity: 0.4;
+        box-shadow: none;
+      }
+      
+      mat-icon {
+        color: #667eea;
+      }
+    }
+    
+    .page-numbers {
+      display: flex;
+      gap: 4px;
+      justify-content: center;
+      margin: 0 12px;
+      
+      button {
+        border-radius: 8px;
+        font-weight: 600;
+        min-width: 40px;
+        height: 40px;
+        transition: all 0.3s ease;
+        background: white;
+        color: #667eea;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        
+        &.current-page {
+          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          color: white;
+          box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+          transform: scale(1.05);
+        }
+        
+        &:hover:not(.current-page) {
+          background: rgba(102, 126, 234, 0.1);
+          transform: translateY(-2px);
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+      }
+    }
+  }
+  
+  .page-info {
+    color: #6c757d;
+    font-weight: 500;
+    font-size: 14px;
+    order: 3;
+    white-space: nowrap;
+  }
+}
+
+// Responsive layout improvements
+@media (max-width: 1024px) {
+  .filter-controls {
+    gap: 15px;
+    
+    .select-field {
+      min-width: 180px;
+    }
+    
+    .search-field {
+      min-width: 250px;
+    }
+  }
+  
+  .pagination-container {
+    flex-direction: column;
+    text-align: center;
+    gap: 16px;
+    
+    .pagination-info,
+    .pagination-controls,
+    .page-info {
+      order: unset;
+    }
+    
+    .pagination-controls {
+      flex: none;
+    }
+  }
+}
+
 @media (max-width: 768px) {
   .filter-controls {
     flex-direction: column;
@@ -267,156 +556,295 @@
     .select-field,
     .search-field {
       min-width: unset;
+      max-width: unset;
       width: 100%;
     }
   }
   
-  .grid-container {
-    height: 60vh;
-    min-height: 400px;
-  }
-  
-  :host ::ng-deep .ag-theme-alpine {
-    .ag-cell {
-      padding: 6px 8px;
-      font-size: 12px;
-    }
-    
-    .ag-header-cell .ag-header-cell-text {
-      font-size: 12px;
+  .pagination-container {
+    .pagination-controls .page-numbers {
+      flex-wrap: wrap;
+      justify-content: center;
     }
   }
 }
 
-// Dark mode support (optional)
-@media (prefers-color-scheme: dark) {
-  :host ::ng-deep .ag-theme-alpine {
-    .ag-header {
-      background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
-      color: #ecf0f1;
-      
-      .ag-header-cell-text {
-        color: #ecf0f1;
-      }
+// Header controls styling enhancement
+.header-controls {
+  margin-bottom: 20px;
+  
+  .demo-info {
+    display: flex;
+    align-items: center;
+    justify-content: center; // Center the demo info
+    gap: 20px;
+    margin-bottom: 15px;
+    padding: 12px 20px;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(248, 249, 250, 0.9) 100%);
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    
+    .demo-badge {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 6px 16px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
     }
     
-    .ag-row {
-      &.ag-row-even {
-        background-color: #2c3e50;
-      }
-      
-      &.ag-row-odd {
-        background-color: #34495e;
-      }
+    .demo-date,
+    .user-info {
+      color: #6c757d;
+      font-size: 14px;
+      font-weight: 500;
+    }
+  }
+  
+  .controls-row {
+    display: flex;
+    justify-content: center; // Center the buttons
+    gap: 12px;
+    
+    button {
+      border-radius: 8px;
+      font-weight: 600;
+      padding: 12px 24px;
+      transition: all 0.3s ease;
       
       &:hover {
-        background-color: rgba(52, 152, 219, 0.2) !important;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
       }
-    }
-    
-    .ag-cell {
-      color: #ecf0f1;
-      border-right-color: #4a5f7a;
     }
   }
 }
 
-.grid-container {
-  height: 600px; // ← THIS IS ESSENTIAL! Without height, grid won't show
-  width: 100%;
-  margin-top: 20px;
+// Responsive improvements
+@media (max-width: 768px) {
+  .grid-controls {
+    flex-direction: column;
+    gap: 12px;
+    text-align: center;
+  }
+  
+  .grid-container {
+    height: 400px !important;
+  }
 }
 
-.grid-container {
-  height: 600px;
-  width: 100%;
-  border-radius: 8px;
-  overflow: hidden;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  border: 1px solid #e0e0e0;
-}
-
-ag-grid-angular {
-  height: 100%;
-  width: 100%;
-}
-
-:host ::ng-deep .ag-theme-alpine {
-  height: 100%;
-  width: 100%;
-}
-
-// Add this to your existing CSS
-
-.pagination-container {
+// Fixed date range filter styling
+.date-range-filter {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 16px;
-  background: #f8f9fa;
-  border-top: 1px solid #e0e0e0;
-  border-radius: 0 0 8px 8px;
+  gap: 20px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
   
-  .pagination-info {
-    display: flex;
-    align-items: center;
-    gap: 16px;
+  // Style the Material form fields for date inputs
+  ::ng-deep mat-form-field {
+    flex: 1;
+    min-width: 200px;
     
-    .page-size-selector {
-      width: 100px;
+    .mat-mdc-form-field-wrapper {
+      background: white;
+      border-radius: 8px;
+      border: 2px solid #e3f2fd;
+      transition: all 0.3s ease;
+      padding: 8px 12px;
       
-      ::ng-deep .mat-mdc-form-field-wrapper {
-        padding-bottom: 0;
+      &:hover {
+        border-color: #bbdefb;
       }
     }
     
-    .row-info {
-      font-size: 14px;
-      color: #666;
+    &.mat-focused .mat-mdc-form-field-wrapper {
+      border-color: #2196f3 !important;
+      box-shadow: 0 0 0 3px rgba(33, 150, 243, 0.1);
     }
-  }
-  
-  .pagination-controls {
-    display: flex;
-    align-items: center;
-    gap: 8px;
     
-    .page-numbers {
-      display: flex;
-      gap: 4px;
-      
-      button {
-        min-width: 40px;
+    // Style the input element
+    .mat-mdc-form-field-input-control {
+      input[type="date"] {
+        background: transparent;
+        border: none;
+        padding: 8px 0;
+        font-size: 14px;
+        color: #424242;
+        font-weight: 500;
+        width: 100%;
         
-        &.current-page {
-          background-color: #2196f3;
-          color: white;
+        &:focus {
+          outline: none;
+        }
+        
+        &::-webkit-calendar-picker-indicator {
+          color: #2196f3;
+          cursor: pointer;
+        }
+        
+        &::placeholder {
+          color: #90a4ae;
         }
       }
     }
-  }
-  
-  .page-info {
-    font-size: 14px;
-    color: #666;
-    min-width: 120px;
-    text-align: right;
+    
+    // Style the label
+    .mat-mdc-form-field-label {
+      color: #546e7a;
+      font-weight: 500;
+      font-size: 14px;
+    }
+    
+    &.mat-focused .mat-mdc-form-field-label {
+      color: #2196f3;
+    }
+    
+    // Remove default outline
+    .mdc-line-ripple,
+    .mat-mdc-form-field-bottom-align {
+      display: none;
+    }
+    
+    // Style the infix
+    .mat-mdc-form-field-infix {
+      padding: 12px 0;
+      min-height: auto;
+      border: none;
+    }
   }
 }
 
-// Responsive pagination
-@media (max-width: 768px) {
-  .pagination-container {
-    flex-direction: column;
-    gap: 12px;
+// Alternative: If you want to style the native date inputs directly
+.filters-content {
+  input[type="date"] {
+    width: 100%;
+    background: white;
+    border: 2px solid #e3f2fd;
+    border-radius: 8px;
+    padding: 12px 16px;
+    font-size: 14px;
+    color: #424242;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    font-family: inherit;
     
-    .pagination-info {
-      flex-direction: column;
-      gap: 8px;
-      align-items: flex-start;
+    &:focus {
+      outline: none;
+      border-color: #2196f3;
+      box-shadow: 0 0 0 3px rgba(33, 150, 243, 0.1);
     }
     
-    .page-info {
+    &:hover {
+      border-color: #bbdefb;
+    }
+    
+    &::-webkit-calendar-picker-indicator {
+      color: #2196f3;
+      cursor: pointer;
+      padding: 4px;
+      border-radius: 4px;
+      
+      &:hover {
+        background: rgba(33, 150, 243, 0.1);
+      }
+    }
+    
+    &::placeholder {
+      color: #90a4ae;
+    }
+  }
+  
+  // Style the labels for date inputs
+  .date-range-filter {
+    > div {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      min-width: 200px;
+      
+      label {
+        color: #546e7a;
+        font-weight: 500;
+        font-size: 14px;
+        margin-bottom: 8px;
+      }
+    }
+  }
+}
+
+// Enhanced search results section with grey background and light blue button
+.search-results-section {
+  background: linear-gradient(135deg, #eceff1 0%, #cfd8dc 100%);
+  border: 2px solid #90caf9;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(144, 202, 249, 0.2);
+  margin-bottom: 20px;
+  padding: 16px 24px;
+  
+  .search-results-info {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  
+  .find-user-link {
+    background: linear-gradient(135deg, #81d4fa 0%, #4fc3f7 100%);
+    color: white;
+    padding: 10px 20px;
+    border-radius: 25px;
+    font-weight: 600;
+    text-decoration: none;
+    font-size: 14px;
+    border: 2px solid #4fc3f7;
+    box-shadow: 0 3px 10px rgba(79, 195, 247, 0.3);
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    
+    &:hover {
+      background: linear-gradient(135deg, #4fc3f7 0%, #29b6f6 100%);
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(79, 195, 247, 0.4);
+      border-color: #29b6f6;
+    }
+    
+    &:active {
+      transform: translateY(0);
+      box-shadow: 0 2px 8px rgba(79, 195, 247, 0.3);
+    }
+  }
+  
+  .search-results-text {
+    color: #455a64;
+    font-weight: 500;
+    font-size: 14px;
+    background: rgba(255, 255, 255, 0.7);
+    padding: 8px 16px;
+    border-radius: 20px;
+    border: 1px solid rgba(144, 202, 249, 0.3);
+    backdrop-filter: blur(5px);
+  }
+}
+
+// Responsive adjustments
+@media (max-width: 768px) {
+  .search-results-section {
+    padding: 12px 16px;
+    
+    .search-results-info {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 12px;
+    }
+    
+    .find-user-link {
+      align-self: flex-start;
+    }
+    
+    .search-results-text {
+      width: 100%;
       text-align: center;
     }
   }

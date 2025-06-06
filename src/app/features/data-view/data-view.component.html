@@ -15,10 +15,9 @@
       <span class="demo-date">2024-01-01 - 2024-12-31</span>
       <span class="user-info">Logged in as m.majid&#64;sredio.io</span>
     </div>
-    
+
     <div class="controls-row">
-      <button mat-raised-button color="primary" class="view-grid-btn">View Grid</button>
-      <button mat-stroked-button class="search-btn">New Global Search Grid</button>
+      <button mat-stroked-button class="search-btn" (click)="openGlobalSearch()">New Global Search Grid</button>
     </div>
   </div>
 
@@ -46,23 +45,117 @@
       <mat-icon matSuffix (click)="onSearch()" style="cursor: pointer;">search</mat-icon>
     </mat-form-field>
 
-    <button mat-raised-button color="warn" class="delete-grid-btn">Delete Grid</button>
   </div>
 
+  <!-- Enhanced Search Results Section -->
+  <div *ngIf="searchTerm && hasSearchResults" class="search-results-section">
+    <div class="search-results-info">
+      <a href="javascript:void(0)" (click)="findUser()" class="find-user-link">
+        Find User
+      </a>
+      <span class="search-results-text"> Search results for "{{searchTerm}}"</span>
+    </div>
+  </div>
+
+  <!-- Simple Collapsible Filters Section -->
+
+
+  <mat-expansion-panel class="filters-panel">
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        <mat-icon>filter_list</mat-icon>
+        Advanced Filters
+      </mat-panel-title>
+    </mat-expansion-panel-header>
+
+    <div class="panel-content">
+      <!-- Date Range Filter -->
+      <div class="date-range-filter">
+        <mat-form-field appearance="outline">
+          <mat-label>Start Date</mat-label>
+          <input matInput type="date" [(ngModel)]="dateRange.start" (change)="applyFilters()">
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>End Date</mat-label>
+          <input matInput type="date" [(ngModel)]="dateRange.end" (change)="applyFilters()">
+        </mat-form-field>
+      </div>
+
+      <!-- Collection-specific filters -->
+      <div class="custom-filters" *ngIf="selectedCollection">
+        <!-- Pull Request Status Filter -->
+        <mat-form-field *ngIf="selectedCollection === 'pulls'" appearance="outline">
+          <mat-label>Status</mat-label>
+          <mat-select [(ngModel)]="customFilters.state" (selectionChange)="applyFilters()">
+            <mat-option value="">All</mat-option>
+            <mat-option value="open">Open</mat-option>
+            <mat-option value="closed">Closed</mat-option>
+            <mat-option value="merged">Merged</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <!-- Issue State Filter -->
+        <mat-form-field *ngIf="selectedCollection === 'issues'" appearance="outline">
+          <mat-label>State</mat-label>
+          <mat-select [(ngModel)]="customFilters.state" (selectionChange)="applyFilters()">
+            <mat-option value="">All</mat-option>
+            <mat-option value="open">Open</mat-option>
+            <mat-option value="closed">Closed</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <!-- User Filter -->
+        <mat-form-field appearance="outline">
+          <mat-label>User</mat-label>
+          <input matInput [(ngModel)]="customFilters.user" (input)="applyFilters()" placeholder="Filter by user...">
+        </mat-form-field>
+      </div>
+
+      <!-- Simplified Faceted Search -->
+      <div class="faceted-search">
+        <h4>Faceted Filters</h4>
+        <div class="facet-section" *ngFor="let facet of availableFacets">
+          <span class="facet-label">{{facet.name}}:</span>
+
+          <!-- Display selected values -->
+          <div class="selected-facets" *ngIf="facet.selectedValues.length > 0">
+            <span *ngFor="let value of facet.selectedValues" class="facet-chip">
+              {{value}}
+              <button class="remove-facet" (click)="removeFacetFilter(facet.key, value)">×</button>
+            </span>
+          </div>
+
+          <!-- Add new facet value -->
+          <mat-form-field appearance="outline" class="facet-input">
+            <input matInput #facetInput (keyup.enter)="addFacetFilter(facet.key, facetInput.value); facetInput.value=''"
+              placeholder="Add {{facet.name}} filter...">
+          </mat-form-field>
+        </div>
+      </div>
+
+      <div class="filter-actions">
+        <button mat-button (click)="clearAllFilters()">Clear All</button>
+        <button mat-raised-button color="primary" (click)="applyFilters()">Apply Filters</button>
+      </div>
+    </div>
+  </mat-expansion-panel>
+
+
+  <div class="grid-controls">
+    <div class="control-buttons">
+      <button mat-button (click)="autoSizeColumns()">Auto Size All</button>
+      <button mat-button (click)="resetColumns()">Reset Columns</button>
+    </div>
+    <div class="stats-info">
+      Showing {{columnDefs.length}} columns • {{rowData.length}} of {{totalRows}} rows
+    </div>
+  </div>
   <!-- AG Grid -->
   <div class="grid-container">
-    <ag-grid-angular
-      #agGrid
-      class="ag-theme-alpine"
-      [columnDefs]="columnDefs"
-      [defaultColDef]="defaultColDef"
-      [rowSelection]="rowSelection"
-      [rowData]="rowData"
-      [pagination]="false"
-      [suppressMenuHide]="true"
-      [animateRows]="true"
-      (gridReady)="onGridReady($event)"
-      (sortChanged)="onSortChanged()"
+    <ag-grid-angular #agGrid [class]="themeClass" [columnDefs]="columnDefs" [defaultColDef]="defaultColDef"
+      [rowSelection]="rowSelection" [rowData]="rowData" [pagination]="false" [suppressMenuHide]="true"
+      [animateRows]="true" (gridReady)="onGridReady($event)" (sortChanged)="onSortChanged()"
       (filterChanged)="onFilterChanged()">
     </ag-grid-angular>
   </div>
@@ -78,54 +171,35 @@
           </mat-option>
         </mat-select>
       </mat-form-field>
-      
+
       <span class="row-info">
-        Showing {{ (currentPage - 1) * pageSize + 1 }} to 
-        {{ Math.min(currentPage * pageSize, totalRows) }} of 
+        Showing {{ (currentPage - 1) * pageSize + 1 }} to
+        {{ Math.min(currentPage * pageSize, totalRows) }} of
         {{ totalRows }} entries
       </span>
     </div>
 
     <div class="pagination-controls">
-      <button 
-        mat-icon-button 
-        [disabled]="currentPage === 1"
-        (click)="onFirstPage()"
-        matTooltip="First Page">
+      <button mat-icon-button [disabled]="currentPage === 1" (click)="onFirstPage()" matTooltip="First Page">
         <mat-icon>first_page</mat-icon>
       </button>
-      
-      <button 
-        mat-icon-button 
-        [disabled]="currentPage === 1"
-        (click)="onPreviousPage()"
-        matTooltip="Previous Page">
+
+      <button mat-icon-button [disabled]="currentPage === 1" (click)="onPreviousPage()" matTooltip="Previous Page">
         <mat-icon>chevron_left</mat-icon>
       </button>
 
       <div class="page-numbers">
-        <button 
-          *ngFor="let page of getPageNumbers()" 
-          mat-button
-          [class.current-page]="page === currentPage"
+        <button *ngFor="let page of getPageNumbers()" mat-button [class.current-page]="page === currentPage"
           (click)="onPageChange(page)">
           {{ page }}
         </button>
       </div>
 
-      <button 
-        mat-icon-button 
-        [disabled]="currentPage === totalPages"
-        (click)="onNextPage()"
-        matTooltip="Next Page">
+      <button mat-icon-button [disabled]="currentPage === totalPages" (click)="onNextPage()" matTooltip="Next Page">
         <mat-icon>chevron_right</mat-icon>
       </button>
-      
-      <button 
-        mat-icon-button 
-        [disabled]="currentPage === totalPages"
-        (click)="onLastPage()"
-        matTooltip="Last Page">
+
+      <button mat-icon-button [disabled]="currentPage === totalPages" (click)="onLastPage()" matTooltip="Last Page">
         <mat-icon>last_page</mat-icon>
       </button>
     </div>
