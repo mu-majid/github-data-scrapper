@@ -49,4 +49,6 @@ export interface SearchParams {
   sortBy?: string;
   sortOrder?: 'asc' | 'desc';
   activeFilterId?: string;
+  facets?: string;
+  facetQuery?: string
 }

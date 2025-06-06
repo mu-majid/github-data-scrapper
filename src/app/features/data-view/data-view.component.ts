@@ -146,12 +146,11 @@ export class DataViewComponent implements OnInit, OnDestroy {
   findUser(): void {
     if (!this.searchTerm.trim()) return;
 
-    // Extract potential ticket ID from search query
-    const ticketId = this.extractTicketId(this.searchTerm);
-    console.log('ticketId ', ticketId)
+    const ticketId = this.extractTicketId(this.searchTerm);    
     this.dataService.findUserByTicket(ticketId).subscribe({
       next: (response) => {
         if (response.success && response.userData.length > 0) {
+          console.log('userData ', response.userData)
           this.openFindUserGrid(response.userData);
         } else {
           this.snackBar.open('No user data found for this ticket', 'Close', {
@@ -180,11 +179,8 @@ export class DataViewComponent implements OnInit, OnDestroy {
   }
 
   private openFindUserGrid(userData: any[]): void {
-    // Store data in sessionStorage for the new window
     sessionStorage.setItem('findUserData', JSON.stringify(userData));
-
-    // Open new tab with Find User Grid
-    const newWindow = window.open('/find-user-grid', '_blank', 'width=1400,height=800');
+    const newWindow = window.open('/find-user-grid', '_blank');
     if (!newWindow) {
       this.snackBar.open('Please allow popups to view Find User results', 'Close', {
         duration: 3000
@@ -198,7 +194,7 @@ export class DataViewComponent implements OnInit, OnDestroy {
     sessionStorage.setItem('globalSearchQuery', this.searchTerm);
 
     // Open in new tab
-    const newWindow = window.open('/global-search', '_blank', 'width=1400,height=900');
+    const newWindow = window.open('/global-search', '_blank',);
     if (!newWindow) {
       this.snackBar.open('Please allow popups to view Global Search', 'Close', {
         duration: 3000
@@ -212,6 +208,7 @@ export class DataViewComponent implements OnInit, OnDestroy {
       this.currentPage = 1;
       this.hasSearchResults = false;
       this.searchTerm = '';
+      this.facets = []
       this.loadCollectionData();
       this.loadActiveFilters();
     }
@@ -239,86 +236,16 @@ export class DataViewComponent implements OnInit, OnDestroy {
   // Add new method for filter application
   onFilterApplied(filter: Filter | null): void {
     this.activeFilter = filter;
-    console.log('d-view onFilterApplied activeFil ', this.activeFilter, filter)
     this.currentPage = 1;
     this.loadCollectionData();
   }
 
   // Add new method for faceted search
   onFacetsChanged(facets: Facet[]): void {
+    console.log('onFacetsChanged > ', facets)
     this.facets = facets;
     this.currentPage = 1;
     this.loadCollectionData();
-  }
-
-  clearAllFilters(): void {
-    this.customFilters = {};
-    this.dateRange = { start: '', end: '' };
-    this.availableFacets.forEach(facet => facet.selectedValues = []);
-    this.searchTerm = '';
-    this.hasSearchResults = false;
-    this.currentPage = 1;
-    // Clear custom filters and facets
-    this.activeFilter = null;
-    this.facets = [];
-    this.loadCollectionData();
-  }
-
-  applyFilters(): void {
-    if (!this.selectedEntity) return;
-
-    const filterOptions = {
-      filters: this.customFilters,
-      dateRange: this.dateRange.start && this.dateRange.end ? this.dateRange : null,
-      search: this.searchTerm,
-      page: 1,
-      limit: this.pageSize
-    };
-
-    this.dataService.advancedFilter(this.selectedEntity, filterOptions)
-      .subscribe({
-        next: (response) => {
-          if (response.success) {
-            this.rowData = response.data;
-            this.totalRows = response.pagination.totalRecords;
-            this.totalPages = response.pagination.total;
-            this.currentPage = 1;
-
-            if (this.gridApi) {
-              this.gridApi.setGridOption('rowData', this.rowData);
-            }
-
-            this.snackBar.open('Filters applied successfully', 'Close', {
-              duration: 2000
-            });
-          }
-        },
-        error: (error) => {
-          console.error('Filter error:', error);
-          this.snackBar.open('Error applying filters', 'Close', {
-            duration: 3000,
-            panelClass: ['error-snackbar']
-          });
-        }
-      });
-  }
-
-  addFacetFilter(facetKey: string, value: string): void {
-    if (!value.trim()) return;
-
-    const facet = this.availableFacets.find(f => f.key === facetKey);
-    if (facet && !facet.selectedValues.includes(value)) {
-      facet.selectedValues.push(value);
-      this.applyFilters();
-    }
-  }
-
-  removeFacetFilter(facetKey: string, value: string): void {
-    const facet = this.availableFacets.find(f => f.key === facetKey);
-    if (facet) {
-      facet.selectedValues = facet.selectedValues.filter(v => v !== value);
-      this.applyFilters();
-    }
   }
 
   onSearch(): void {
@@ -429,9 +356,12 @@ export class DataViewComponent implements OnInit, OnDestroy {
     if (this.activeFilter) {
       params.activeFilterId = this.activeFilter._id;
     }
+    console.log('fetch -> ', this.facets)
     if (this.facets.length > 0) {
       params.facetQuery = JSON.stringify(this.buildFacetQuery());
     }
+    console.log('fetch -> ', this.facets)
+
 
     this.dataService.getCollectionData(this.selectedEntity, params).subscribe({
       next: (response: CollectionDataResponse) => {
@@ -458,7 +388,6 @@ export class DataViewComponent implements OnInit, OnDestroy {
     });
   }
 
-  // Add new method to build facet query
   private buildFacetQuery(): any {
     const query: any = {};
     

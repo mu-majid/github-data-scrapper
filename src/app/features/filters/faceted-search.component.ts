@@ -47,15 +47,15 @@ export class FacetedSearchComponent implements OnInit {
   activeFacets: Facet[] = [];
   showAllFacets = false;
   commonFacets = {
-    'repositories': ['owner.login', 'language', 'private', 'fork', 'created_at'],
+    'repositories': ['language', 'full_name', ],
     'organizations': ['blog', 'description', 'name', 'email'],
-    'commits': ['author.login', 'committer.login', 'commit.author.date'],
-    'pulls': ['user.login', 'state', 'merged', 'created_at', 'closed_at'],
-    'issues': ['user.login', 'state', 'labels', 'created_at', 'closed_at'],
-    'users': ['type', 'site_admin', 'created_at']
+    'commits': ['repositoryId'],
+    'pulls': ['state'],
+    'issues': ['state', 'title', 'repositoryId'],
+    'users': ['type', 'login', 'email', 'company']
   };
 
-  constructor(private dataService: DataService) {}
+  constructor(private dataService: DataService) { }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['availableFields'] && this.availableFields.length > 0) {
@@ -68,11 +68,15 @@ export class FacetedSearchComponent implements OnInit {
   }
 
   initializeFacets(): void {
-    console.log('FACETS -> ',this.collection)
+    console.log('FACETS -> ', this.collection)
     const fields = this.commonFacets[this.collection as keyof typeof this.commonFacets] || [];
-    
+    this.facets = []
+    console.log('FACETS -> availableFields ', this.availableFields)
+
     fields.forEach((field: any) => {
       const fieldDef = this.availableFields.find(f => f.field === field);
+    console.log('FACETS -> availableFields ', this.availableFields)
+
       if (fieldDef) {
         const facet: Facet = {
           field: field,
@@ -80,7 +84,7 @@ export class FacetedSearchComponent implements OnInit {
           values: [],
           selectedValues: []
         };
-        
+
         this.facets.push(facet);
         this.loadFacetValues(facet);
       }
@@ -93,8 +97,8 @@ export class FacetedSearchComponent implements OnInit {
       return 'date';
     } else if (fieldDef.field.includes('count') || fieldDef.field.includes('size')) {
       return 'number';
-    } else if (fieldDef.field === 'private' || fieldDef.field === 'fork' || 
-               fieldDef.field === 'merged' || fieldDef.field === 'site_admin') {
+    } else if (fieldDef.field === 'private' || fieldDef.field === 'fork' ||
+      fieldDef.field === 'merged' || fieldDef.field === 'site_admin') {
       return 'boolean';
     }
     return 'string';
@@ -103,13 +107,14 @@ export class FacetedSearchComponent implements OnInit {
   loadFacetValues(facet: Facet): void {
     // Call backend to get facet values with counts
     this.dataService.getFacetValues(this.collection, facet.field).subscribe(values => {
+      console.log('loadFacetValues > ', values)
       if (facet.type === 'string' || facet.type === 'boolean') {
-        facet.values = values.map(v => ({
-          value: v._id,
+        facet.values = values.values.map((v: any) => ({
+          value: v.value,
           count: v.count,
           selected: false
         }));
-      } else if (facet.type === 'number' || facet.type === 'date') {
+      } else if (facet.type === 'number') {
         facet.range = {
           min: values[0]?.min || 0,
           max: values[0]?.max || 0
@@ -120,14 +125,14 @@ export class FacetedSearchComponent implements OnInit {
 
   toggleFacetValue(facet: Facet, value: FacetValue): void {
     value.selected = !value.selected;
-    
+
     if (value.selected) {
       facet.selectedValues = facet.selectedValues || [];
       facet.selectedValues.push(value.value);
     } else {
       facet.selectedValues = facet.selectedValues?.filter(v => v !== value.value) || [];
     }
-    
+
     this.updateActiveFacets();
   }
 
@@ -138,22 +143,22 @@ export class FacetedSearchComponent implements OnInit {
   }
 
   updateActiveFacets(): void {
-    this.activeFacets = this.facets.filter(f => 
+    this.activeFacets = this.facets.filter(f =>
       (f.selectedValues && f.selectedValues.length > 0) ||
       (f.selectedRange && (f.selectedRange.min || f.selectedRange.max))
     );
-    
+    console.log('this.activeFacets > ',this.activeFacets)
     this.facetsChanged.emit(this.activeFacets);
   }
 
   clearFacet(facet: Facet): void {
     facet.selectedValues = [];
     facet.selectedRange = undefined;
-    
+
     if (facet.values) {
       facet.values.forEach(v => v.selected = false);
     }
-    
+
     this.updateActiveFacets();
   }
 

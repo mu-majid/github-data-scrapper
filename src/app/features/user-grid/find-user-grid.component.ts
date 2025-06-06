@@ -14,6 +14,9 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule } from '@angular/router';
+import { ModuleRegistry, AllCommunityModule } from 'ag-grid-community';
+    
+ModuleRegistry.registerModules([ AllCommunityModule ]);
 
 @Component({
   selector: 'app-find-user-grid',

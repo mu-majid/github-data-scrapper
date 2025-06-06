@@ -25,7 +25,7 @@ export class DataService {
     if (params.sortBy) httpParams = httpParams.set('sortBy', params.sortBy);
     if (params.sortOrder) httpParams = httpParams.set('sortOrder', params.sortOrder);
     if (params.activeFilterId) httpParams = httpParams.set('activeFilterId', params.activeFilterId);
-
+    if (params.facetQuery) httpParams = httpParams.set('facetQuery', params.facetQuery);
     return this.http.get<CollectionDataResponse>(
       `${this.baseUrl}/data/collection/${collectionName}`,
       { params: httpParams }
@@ -59,7 +59,21 @@ export class DataService {
     });
   }
 
-  getFacetValues(collection: string, field: string): Observable<any[]> {
-    return this.http.get<any[]>(`${this.baseUrl}/collection/${collection}/facets/${field}`);
+  getFacetValues(collection: string, field: string): Observable<any> {
+    return this.http.get<any>(`${this.baseUrl}/facets/${collection}/field/${field}`);
   }
+
+  getCollectionFacets(collection: string, fields: string[]): Observable<any> {
+    const params = new HttpParams().set('fields', fields.join(','));
+    return this.http.get<any>(`${this.baseUrl}/facets/${collection}`, { params });
+  }
+
+  facetedSearch(collection: string, facets: any, page: number = 1, limit: number = 50): Observable<any> {
+    return this.http.post<any>(`${this.baseUrl}/data/${collection}/faceted-search`, {
+      facets,
+      page,
+      limit
+    });
+  }
+
 }
