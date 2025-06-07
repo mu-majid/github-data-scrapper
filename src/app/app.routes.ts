@@ -8,33 +8,38 @@ export const routes: Routes = [
   },
   {
     path: 'integration',
-    loadComponent: () => 
+    loadComponent: () =>
       import('./features/integration/integration.component').then(m => m.IntegrationComponent)
   },
   {
     path: 'data',
-    loadComponent: () => 
+    loadComponent: () =>
       import('./features/data-view/data-view.component').then(m => m.DataViewComponent)
   },
   {
     path: 'auth/success',
-    loadComponent: () => 
+    loadComponent: () =>
       import('./features/auth/auth-success/auth-success.component').then(m => m.AuthSuccessComponent)
   },
   {
     path: 'auth/failure',
-    loadComponent: () => 
+    loadComponent: () =>
       import('./features/auth/auth-failure/auth-failure.component').then(m => m.AuthFailureComponent)
   },
   {
     path: 'global-search',
-    loadComponent: () => 
+    loadComponent: () =>
       import('./features/global-search/global-search.component').then(m => m.GlobalSearchComponent)
   },
-    {
+  {
     path: 'find-user-grid',
-    loadComponent: () => 
+    loadComponent: () =>
       import('./features/user-grid/find-user-grid.component').then(m => m.FindUserGridComponent)
+  },
+  {
+    path: 'visual',
+    loadComponent: () =>
+      import('./features/data-visualisation/visual.component').then(m => m.DataVisualizationComponent)
   },
   {
     path: '**',

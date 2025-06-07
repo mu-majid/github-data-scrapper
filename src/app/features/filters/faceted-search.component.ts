@@ -68,15 +68,11 @@ export class FacetedSearchComponent implements OnInit {
   }
 
   initializeFacets(): void {
-    console.log('FACETS -> ', this.collection)
     const fields = this.commonFacets[this.collection as keyof typeof this.commonFacets] || [];
     this.facets = []
-    console.log('FACETS -> availableFields ', this.availableFields)
 
     fields.forEach((field: any) => {
       const fieldDef = this.availableFields.find(f => f.field === field);
-    console.log('FACETS -> availableFields ', this.availableFields)
-
       if (fieldDef) {
         const facet: Facet = {
           field: field,
@@ -107,7 +103,6 @@ export class FacetedSearchComponent implements OnInit {
   loadFacetValues(facet: Facet): void {
     // Call backend to get facet values with counts
     this.dataService.getFacetValues(this.collection, facet.field).subscribe(values => {
-      console.log('loadFacetValues > ', values)
       if (facet.type === 'string' || facet.type === 'boolean') {
         facet.values = values.values.map((v: any) => ({
           value: v.value,
@@ -147,7 +142,6 @@ export class FacetedSearchComponent implements OnInit {
       (f.selectedValues && f.selectedValues.length > 0) ||
       (f.selectedRange && (f.selectedRange.min || f.selectedRange.max))
     );
-    console.log('this.activeFacets > ',this.activeFacets)
     this.facetsChanged.emit(this.activeFacets);
   }
 

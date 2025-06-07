@@ -82,8 +82,8 @@
   </div>
   <!-- AG Grid -->
   <div class="grid-container">
-    <ag-grid-angular #agGrid [class]="themeClass" [columnDefs]="columnDefs" [defaultColDef]="defaultColDef"
-      [rowSelection]="rowSelection" [rowData]="rowData" [pagination]="false" [suppressMenuHide]="true"
+    <ag-grid-angular #agGrid [class]="themeClass" [theme]="'legacy'" [columnDefs]="columnDefs" [defaultColDef]="defaultColDef"
+      [rowSelection]="rowSelection" [rowData]="rowData" [pagination]="false" [suppressMenuHide]="false"
       [animateRows]="true" (gridReady)="onGridReady($event)" (sortChanged)="onSortChanged()"
       (filterChanged)="onFilterChanged()">
     </ag-grid-angular>

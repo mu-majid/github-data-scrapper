@@ -52,3 +52,14 @@ export interface SearchParams {
   facets?: string;
   facetQuery?: string
 }
+
+export interface VisualisationSearchParams {
+  page?: number;
+  limit?: number;
+  search?: string;
+  sortBy?: string;
+  sortOrder?: 'asc' | 'desc';
+  author?: string;
+  status?: string;
+  repositoryId?: string;
+}

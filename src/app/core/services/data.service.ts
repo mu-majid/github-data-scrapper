@@ -2,7 +2,8 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
-import { CollectionsResponse, SearchParams, CollectionDataResponse, FieldsResponse } from '../models/data.model';
+import { CollectionsResponse, SearchParams, CollectionDataResponse, FieldsResponse, VisualisationSearchParams } from '../models/data.model';
+import { ApiResponse } from '../models/visual.model';
 
 @Injectable({
   providedIn: 'root'
@@ -74,6 +75,24 @@ export class DataService {
       page,
       limit
     });
+  }
+
+  visualiseRepo(params: VisualisationSearchParams = {}): Observable<ApiResponse> {
+    let httpParams = new HttpParams();
+
+    if (params.page) httpParams = httpParams.set('page', params.page.toString());
+    if (params.limit) httpParams = httpParams.set('limit', params.limit.toString());
+    if (params.search) httpParams = httpParams.set('search', params.search);
+    if (params.sortBy) httpParams = httpParams.set('sortBy', params.sortBy);
+    if (params.sortOrder) httpParams = httpParams.set('sortOrder', params.sortOrder);
+    if (params.repositoryId) httpParams = httpParams.set('repositoryId', params.repositoryId);
+    if (params.status) httpParams = httpParams.set('status', params.status);
+    if (params.author) httpParams = httpParams.set('author', params.author);
+    console.log('httpParams -> ',httpParams)
+    return this.http.get<ApiResponse>(
+      `${this.baseUrl}/visualisation/repository`,
+      { params: httpParams }
+    );
   }
 
 }

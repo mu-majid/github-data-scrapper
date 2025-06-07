@@ -42,11 +42,25 @@ import { DataService } from '../../core/services/data.service';
 })
 export class FilterManagementComponent implements OnInit {
   separatorKeysCodes = []
-  removeStatusValue(_t136: any) {
-    console.log('removeStatusValue called')
+
+  removeStatusValue(valueToRemove: string): void {
+    console.log('remove > ', valueToRemove)
+    const currentValues = this.filterForm.get('status.values')?.value || [];
+    const updatedValues = currentValues.filter((value: string) => value !== valueToRemove);
+    this.filterForm.get('status.values')?.setValue(updatedValues);
   }
-  addStatusValue($event: MatChipInputEvent) {
-    console.log('addStatusValue called')
+  addStatusValue(event: MatChipInputEvent): void {
+    
+    const value = (event.value || '').trim();
+    console.log('add > ', value)
+    if (value) {
+      const currentValues = this.filterForm.get('status.values')?.value || [];
+      if (!currentValues.includes(value)) {
+        const updatedValues = [...currentValues, value];
+        this.filterForm.get('status.values')?.setValue(updatedValues);
+      }
+    }
+    event.chipInput!.clear();
   }
   @Input() collection: string = '';
   @Output() filterApplied = new EventEmitter<Filter>();
@@ -57,6 +71,7 @@ export class FilterManagementComponent implements OnInit {
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['collection'] && changes['collection'].currentValue) {
       console.log('>> entity change', changes['collection'].currentValue)
+      this.showCreateForm = false;
       this.loadFilters();
     }
   }
@@ -132,6 +147,7 @@ export class FilterManagementComponent implements OnInit {
   loadFilters(): void {
     this.filterService.getUserFilters().subscribe(filters => {
       this.filters = filters.filter(f => f.collection === this.collection);
+      this.loadAvailableFields()
     });
   }
 
@@ -180,8 +196,6 @@ export class FilterManagementComponent implements OnInit {
   editFilter(filter: Filter): void {
     this.editingFilter = filter;
     this.showCreateForm = true;
-
-    // Populate form with filter data
     this.filterForm.patchValue({
       name: filter.name,
       description: filter.description,
@@ -190,8 +204,6 @@ export class FilterManagementComponent implements OnInit {
       enableStatus: !!filter.filters.status,
       status: filter.filters.status || {}
     });
-
-    // Populate custom fields
     this.customFields.clear();
     if (filter.filters.customFields) {
       filter.filters.customFields.forEach(field => {

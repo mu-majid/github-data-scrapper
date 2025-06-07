@@ -151,7 +151,7 @@ export class DataViewComponent implements OnInit, OnDestroy {
       next: (response) => {
         if (response.success && response.userData.length > 0) {
           console.log('userData ', response.userData)
-          this.openFindUserGrid(response.userData);
+          this.openFindUserGrid(response.userData, ticketId);
         } else {
           this.snackBar.open('No user data found for this ticket', 'Close', {
             duration: 3000
@@ -178,8 +178,10 @@ export class DataViewComponent implements OnInit, OnDestroy {
     return searchQuery.trim();
   }
 
-  private openFindUserGrid(userData: any[]): void {
+  private openFindUserGrid(userData: any[], ticketId: string = ''): void {
     sessionStorage.setItem('findUserData', JSON.stringify(userData));
+    sessionStorage.setItem('findUserTicket', JSON.stringify(ticketId));
+
     const newWindow = window.open('/find-user-grid', '_blank');
     if (!newWindow) {
       this.snackBar.open('Please allow popups to view Find User results', 'Close', {
@@ -214,7 +216,6 @@ export class DataViewComponent implements OnInit, OnDestroy {
     }
   }
 
-  // Add new method to load active filters
   loadActiveFilters(): void {
     if (!this.selectedEntity) return;
     
@@ -233,14 +234,12 @@ export class DataViewComponent implements OnInit, OnDestroy {
       });
   }
 
-  // Add new method for filter application
   onFilterApplied(filter: Filter | null): void {
     this.activeFilter = filter;
     this.currentPage = 1;
     this.loadCollectionData();
   }
 
-  // Add new method for faceted search
   onFacetsChanged(facets: Facet[]): void {
     console.log('onFacetsChanged > ', facets)
     this.facets = facets;
@@ -356,13 +355,9 @@ export class DataViewComponent implements OnInit, OnDestroy {
     if (this.activeFilter) {
       params.activeFilterId = this.activeFilter._id;
     }
-    console.log('fetch -> ', this.facets)
     if (this.facets.length > 0) {
       params.facetQuery = JSON.stringify(this.buildFacetQuery());
     }
-    console.log('fetch -> ', this.facets)
-
-
     this.dataService.getCollectionData(this.selectedEntity, params).subscribe({
       next: (response: CollectionDataResponse) => {
         this.isLoading = false;
@@ -568,10 +563,6 @@ export class DataViewComponent implements OnInit, OnDestroy {
 
   private loadCollectionData(): void {
     if (!this.selectedEntity) return;
-
-    console.log('Loading data for collection:', this.selectedEntity);
-
-    // Go directly to data fetching - no need for field definitions anymore
     this.fetchData();
   }
 
