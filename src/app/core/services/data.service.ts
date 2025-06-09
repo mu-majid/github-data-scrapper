@@ -50,16 +50,6 @@ export class DataService {
     return this.http.get(`${this.baseUrl}/user/find/${ticketId}`);
   }
 
-  advancedFilter(collectionName: string, filterOptions: any): Observable<any> {
-    return this.http.post(`${this.baseUrl}/search/collection/${collectionName}/filter`, filterOptions);
-  }
-
-  smartSearch(query: string, collection: string, page: number = 1, limit: number = 50): Observable<any> {
-    return this.http.get(`${this.baseUrl}/search/smart`, {
-      params: { query, collection, page: page.toString(), limit: limit.toString() }
-    });
-  }
-
   getFacetValues(collection: string, field: string): Observable<any> {
     return this.http.get<any>(`${this.baseUrl}/facets/${collection}/field/${field}`);
   }
