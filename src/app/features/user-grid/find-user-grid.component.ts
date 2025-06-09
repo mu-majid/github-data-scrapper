@@ -59,11 +59,9 @@ export class FindUserGridComponent implements OnInit {
           autoHeight: true,
           wrapText: true,
           cellRenderer: (params: any) => {
-            // Check if value is JSON-like object/array
             if (typeof params.value === 'object') {
               return `<pre style="margin: 0; white-space: pre-wrap; font-family: monospace;">${JSON.stringify(params.value, null, 2)}</pre>`;
             }
-            // For strings that might be JSON
             try {
               const parsed = JSON.parse(params.value);
               return `<pre style="margin: 0; white-space: pre-wrap; font-family: monospace;">${JSON.stringify(parsed, null, 2)}</pre>`;
@@ -81,7 +79,6 @@ export class FindUserGridComponent implements OnInit {
       domLayout: 'autoHeight'
     },
     getDetailRowData: (params: any) => {
-      // Get the original row data
       const data = params.data;
       console.log(params)
       console.log(data)
@@ -105,7 +102,7 @@ export class FindUserGridComponent implements OnInit {
       cellRendererParams: {
         suppressCount: true,
         suppressDoubleClickExpand: true,
-        innerRenderer: () => '<span style="color: #1976d2;">⋯</span>' // Add a visual indicator
+        innerRenderer: () => '<span style="color: #1976d2;">⋯</span>'
       },
       pinned: 'left',
       lockVisible: true,
